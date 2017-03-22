@@ -1,0 +1,933 @@
+<!doctype html>
+
+
+
+  
+
+
+<html class="theme-next mist use-motion" lang="zh-Hans">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+  
+  
+  
+  
+
+  
+    
+    
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+    
+    
+    <link href="//fonts.googleapis.com/css?family=Lato:300,300italic,400,400italic,700,700italic&subset=latin,latin-ext" rel="stylesheet" type="text/css">
+  
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.0" rel="stylesheet" type="text/css" />
+
+
+  <meta name="keywords" content="Swift,RxSwift," />
+
+
+
+
+
+
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico?v=5.1.0" />
+
+
+
+
+
+
+<meta name="description" content="Observable在ReactiveX中，一个观察者(Observer)订阅一个可观察对象(Observable)。观察者对 Observable发射的数据或数据序列作出响应。这种模式可以极大地简化并发操作，因为它创建了一个处于待命状态的观察者哨兵，在未来某个时刻响应Observable的通知，不需要阻塞 等待Observable发射数据。
+
+初始化playground
+初始化项目工程，pod引">
+<meta property="og:type" content="article">
+<meta property="og:title" content="RxSwift（一）Creating and Subscribing to Observables 创建和订阅观察者">
+<meta property="og:url" content="http://share.ra.com/2017/03/22/RxSwift（一）Creating and Subscribing to Observables 创建和订阅观察者/index.html">
+<meta property="og:site_name" content="如果全世界都说C语言">
+<meta property="og:description" content="Observable在ReactiveX中，一个观察者(Observer)订阅一个可观察对象(Observable)。观察者对 Observable发射的数据或数据序列作出响应。这种模式可以极大地简化并发操作，因为它创建了一个处于待命状态的观察者哨兵，在未来某个时刻响应Observable的通知，不需要阻塞 等待Observable发射数据。
+
+初始化playground
+初始化项目工程，pod引">
+<meta property="og:image" content="http://reactivex.io/assets/operators/legend.png">
+<meta property="og:updated_time" content="2017-03-22T01:50:59.000Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="RxSwift（一）Creating and Subscribing to Observables 创建和订阅观察者">
+<meta name="twitter:description" content="Observable在ReactiveX中，一个观察者(Observer)订阅一个可观察对象(Observable)。观察者对 Observable发射的数据或数据序列作出响应。这种模式可以极大地简化并发操作，因为它创建了一个处于待命状态的观察者哨兵，在未来某个时刻响应Observable的通知，不需要阻塞 等待Observable发射数据。
+
+初始化playground
+初始化项目工程，pod引">
+<meta name="twitter:image" content="http://reactivex.io/assets/operators/legend.png">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Mist',
+    sidebar: {"position":"left","display":"post","offset":12,"offset_float":0,"b2t":false,"scrollpercent":false},
+    fancybox: true,
+    motion: true,
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://share.ra.com/2017/03/22/RxSwift（一）Creating and Subscribing to Observables 创建和订阅观察者/"/>
+
+
+
+
+
+  <title> RxSwift（一）Creating and Subscribing to Observables 创建和订阅观察者 | 如果全世界都说C语言 </title>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail ">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">如果全世界都说C语言</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle"></p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br />
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br />
+            
+            标签
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-user"></i> <br />
+            
+            关于
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+    <link itemprop="mainEntityOfPage" href="http://share.ra.com/2017/03/22/RxSwift（一）Creating and Subscribing to Observables 创建和订阅观察者/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="敖老黑">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/uploads/avatar.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="如果全世界都说C语言">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+            
+            
+              
+                RxSwift（一）Creating and Subscribing to Observables 创建和订阅观察者
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2017-03-22T09:47:37+08:00">
+                2017-03-22
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/iOS/" itemprop="url" rel="index">
+                    <span itemprop="name">iOS</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+              <span class="post-comments-count">
+                <span class="post-meta-divider">|</span>
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-comment-o"></i>
+                </span>
+                <a href="/2017/03/22/RxSwift（一）Creating and Subscribing to Observables 创建和订阅观察者/#comments" itemprop="discussionUrl">
+                  <span class="post-comments-count ds-thread-count" data-thread-key="2017/03/22/RxSwift（一）Creating and Subscribing to Observables 创建和订阅观察者/" itemprop="commentCount"></span>
+                </a>
+              </span>
+            
+          
+
+          
+          
+             <span id="/2017/03/22/RxSwift（一）Creating and Subscribing to Observables 创建和订阅观察者/" class="leancloud_visitors" data-flag-title="RxSwift（一）Creating and Subscribing to Observables 创建和订阅观察者">
+               <span class="post-meta-divider">|</span>
+               <span class="post-meta-item-icon">
+                 <i class="fa fa-eye"></i>
+               </span>
+               
+                 <span class="post-meta-item-text">阅读次数 </span>
+               
+                 <span class="leancloud-visitors-count"></span>
+             </span>
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h2 id="Observable"><a href="#Observable" class="headerlink" title="Observable"></a>Observable</h2><p>在ReactiveX中，一个观察者(Observer)订阅一个可观察对象(Observable)。观察者对 Observable发射的数据或数据序列作出响应。这种模式可以极大地简化并发操作，因为它创建了一个处于待命状态的观察者哨兵，在未来某个时刻响应Observable的通知，不需要阻塞 等待Observable发射数据。</p>
+<p><img src="http://reactivex.io/assets/operators/legend.png" alt="Observable" title="Observable"></p>
+<h2 id="初始化playground"><a href="#初始化playground" class="headerlink" title="初始化playground"></a>初始化playground</h2><ul>
+<li>初始化项目工程，pod引入RxSwift</li>
+<li>创建playground</li>
+<li>在playground\Sources下创建 support.swift文件 填写下面代码</li>
+</ul>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div></pre></td><td class="code"><pre><div class="line">import Foundation</div><div class="line"></div><div class="line">public func exampleOf(description:String, action:  @escaping ()-&gt;Void)  &#123;</div><div class="line">    </div><div class="line">    print(&quot;\n------exampleOf:\(description)------&quot;)</div><div class="line">    </div><div class="line">    action()</div><div class="line">    </div><div class="line">&#125;</div><div class="line"></div><div class="line">import PlaygroundSupport</div><div class="line"></div><div class="line">public func playgroundShouldContinueIndefinitely() &#123;</div><div class="line">    PlaygroundPage.current.needsIndefiniteExecution = true</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<ul>
+<li>在playground中导入RxSwift,RxCocoa</li>
+</ul>
+<h2 id="never"><a href="#never" class="headerlink" title="never"></a>never</h2><p>创建一个不发射任何数据的Observable</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div></pre></td><td class="code"><pre><div class="line"></div><div class="line">exampleOf(description:&quot;never&quot;)&#123;</div><div class="line"></div><div class="line">    let disposeBag = DisposeBag()</div><div class="line">    </div><div class="line">    let neverSequence = Observable&lt;String&gt;.never()</div><div class="line">    </div><div class="line">    neverSequence.subscribe&#123; _ in</div><div class="line">    </div><div class="line">        print(&quot;永远不会执行&quot;)</div><div class="line">        </div><div class="line">    &#125;.disposed(by: disposeBag)</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<h2 id="empty"><a href="#empty" class="headerlink" title="empty"></a>empty</h2><p>创建一个什么都不做直接通知完成的Observable.它只发送 .Completed 消息。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div></pre></td><td class="code"><pre><div class="line">exampleOf(description: &quot;empty&quot;)&#123;</div><div class="line"></div><div class="line">    Observable&lt;Int&gt;.empty()</div><div class="line">        .subscribe&#123; event in</div><div class="line">            </div><div class="line">            print(event)</div><div class="line">            </div><div class="line">    &#125;.disposed(by: DisposeBag())</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<h2 id="just"><a href="#just" class="headerlink" title="just:"></a>just:</h2><p>将一个或多个对象转换成发射这个或这些对象的一个Observable,just 是只包含一个元素的序列，它会先发送 .Next(value) ，然后发送 .Completed 。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div></pre></td><td class="code"><pre><div class="line">exampleOf(description: &quot;just&quot;)&#123;</div><div class="line"></div><div class="line">    Observable.just(&quot;我是对象&quot;)</div><div class="line">        .subscribe&#123; event in</div><div class="line">            </div><div class="line">    </div><div class="line">            print(event)</div><div class="line">    &#125;.addDisposableTo(DisposeBag())</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<h2 id="of"><a href="#of" class="headerlink" title="of"></a>of</h2><p>可以把一系列元素转换成事件序列</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div></pre></td><td class="code"><pre><div class="line">exampleOf(description: &quot;of&quot;)&#123;</div><div class="line"></div><div class="line">    Observable.of(1,2,3)</div><div class="line">    .subscribe(onNext: &#123; (event) in</div><div class="line">        print(event)</div><div class="line">    &#125;, onError: &#123; (error) in</div><div class="line">        print(error)</div><div class="line">    &#125;, onCompleted: &#123;</div><div class="line">        print(&quot;信号完成&quot;)</div><div class="line">    &#125;, onDisposed: &#123; </div><div class="line">        print(&quot;信号序列释放&quot;)</div><div class="line">    &#125;).disposed(by: DisposeBag())</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<h2 id="from"><a href="#from" class="headerlink" title="from"></a>from</h2><p>from 是通过 asObservable() 方法把 Swift 中的序列 (SequenceType) 转换成事件序列。例如:将一个数组转换成一个Observable</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div></pre></td><td class="code"><pre><div class="line">exampleOf(description: &quot;from&quot;)&#123;</div><div class="line"></div><div class="line">    Observable.from([&quot;lily&quot;,&quot;lilei&quot;,&quot;sb&quot;])</div><div class="line">    .subscribe(onNext: &#123;</div><div class="line">        </div><div class="line">        print($0)</div><div class="line">        </div><div class="line">    &#125;).disposed(by: DisposeBag())</div><div class="line">    </div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<h2 id="create"><a href="#create" class="headerlink" title="create"></a>create</h2><p>使用一个函数闭包从头创建一个Observable,通过 .on(e: Event) 添加事件。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div></pre></td><td class="code"><pre><div class="line">exampleOf(description: &quot;create&quot;)&#123;</div><div class="line"></div><div class="line">    </div><div class="line">    let myJust = &#123; (element:String) -&gt; Observable&lt;String&gt; in</div><div class="line">    </div><div class="line">        return Observable.create&#123; observable in</div><div class="line">            </div><div class="line">            observable.on(.next(element))</div><div class="line">            </div><div class="line">            observable.on(.completed)</div><div class="line">            </div><div class="line">            return Disposables.create()</div><div class="line">        &#125;</div><div class="line">    &#125;</div><div class="line">    </div><div class="line">    myJust(&quot;🍎&quot;)</div><div class="line">        .subscribe&#123;</div><div class="line">    </div><div class="line">            print($0)</div><div class="line">    &#125;.disposed(by: DisposeBag())</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<h2 id="range"><a href="#range" class="headerlink" title="range"></a>range</h2><p>创建一个发射特定整数序列的Observable</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div></pre></td><td class="code"><pre><div class="line">exampleOf(description: &quot;range&quot;)&#123;</div><div class="line"></div><div class="line">    Observable.range(start: 1,count:10)</div><div class="line">        .subscribe&#123;</div><div class="line">    </div><div class="line">            print($0)</div><div class="line">    &#125;.disposed(by: DisposeBag())</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<h2 id="repeatElement"><a href="#repeatElement" class="headerlink" title="repeatElement"></a>repeatElement</h2><p>创建一个重复发射指定数据或数据序列的Observable，</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div></pre></td><td class="code"><pre><div class="line">exampleOf(description: &quot;repeatElement&quot; )&#123;</div><div class="line"></div><div class="line">    Observable.repeatElement(&quot;🐩&quot;)</div><div class="line">        .take(3)//只发射3次</div><div class="line">        .subscribe&#123;print($0)&#125;</div><div class="line">        .disposed(by: DisposeBag())</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<h2 id="generate"><a href="#generate" class="headerlink" title="generate"></a>generate</h2><p>发射所有条件为真的值的响应序列</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div></pre></td><td class="code"><pre><div class="line">exampleOf(description: &quot;generate&quot;)&#123;</div><div class="line"></div><div class="line">    Observable.generate(initialState: 0, condition: &#123; (T) -&gt; Bool in</div><div class="line">        </div><div class="line">        T &lt; 3</div><div class="line">        </div><div class="line">    &#125;, iterate: &#123;  $0 + 1&#125;)</div><div class="line">        .subscribe&#123;</div><div class="line">    </div><div class="line">          print($0)</div><div class="line">    &#125;.addDisposableTo(DisposeBag())</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<h2 id="deferred"><a href="#deferred" class="headerlink" title="deferred"></a>deferred</h2><p>deferred 会等到有订阅者的时候再通过工厂方法创建 Observable 对象，每个订阅者订阅的对象都是内容相同而完全独立的序列。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div></pre></td><td class="code"><pre><div class="line">exampleOf(description: &quot;deferred&quot;)&#123;</div><div class="line"></div><div class="line">    var count = 1</div><div class="line">    </div><div class="line">    let disposeBag = DisposeBag()</div><div class="line">    </div><div class="line">    let deferredSequence = Observable.deferred(&#123; () -&gt; Observable&lt;String&gt; in</div><div class="line">        </div><div class="line">        print(&quot;creat---\(count)&quot;)</div><div class="line">        </div><div class="line">        return Observable.create&#123; observable in</div><div class="line">        </div><div class="line">            print(&quot;发射~~~~...&quot;)</div><div class="line">            observable.onNext(&quot;🐶&quot;)</div><div class="line">            observable.onNext(&quot;🐱&quot;)</div><div class="line">            observable.onNext(&quot;🐵&quot;)</div><div class="line">            return Disposables.create()</div><div class="line">        &#125;</div><div class="line">    &#125;)</div><div class="line">    </div><div class="line">    //第一个订阅者</div><div class="line">    </div><div class="line">    deferredSequence.subscribe&#123;</div><div class="line">    </div><div class="line">        print(&quot;第一个订阅者--------&quot;)</div><div class="line">        print($0)</div><div class="line">    &#125;.disposed(by: disposeBag)</div><div class="line">    </div><div class="line">    </div><div class="line">    //第二个订阅者</div><div class="line">    deferredSequence.subscribe&#123;</div><div class="line">    </div><div class="line">        print(&quot;第二个订阅者&quot;)</div><div class="line">        print($0)</div><div class="line">    &#125;.disposed(by: disposeBag)</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<h2 id="error"><a href="#error" class="headerlink" title="error"></a>error</h2><p>创建一个什么都不做直接通知错误的Observable</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div></pre></td><td class="code"><pre><div class="line">exampleOf(description: &quot;error&quot;)&#123;</div><div class="line"></div><div class="line">    enum testError:Error&#123;</div><div class="line">    </div><div class="line">        case bigError</div><div class="line">    &#125;</div><div class="line">    </div><div class="line">    Observable&lt;Int&gt;.error(testError.bigError).subscribe&#123;</div><div class="line">    </div><div class="line">        print($0)</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<h2 id="doOn"><a href="#doOn" class="headerlink" title="doOn"></a>doOn</h2><p>doOn 可以监听事件，并且在事件发生之前调用。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div></pre></td><td class="code"><pre><div class="line">exampleOf(description: &quot;doOn&quot;) &#123; </div><div class="line">    </div><div class="line">    Observable.of(1,2,3,4).do(onNext: &#123; (event) in</div><div class="line">        print(event)</div><div class="line">    &#125;, onError: &#123; (error) in</div><div class="line">        print(error)</div><div class="line">    &#125;, onCompleted: &#123;</div><div class="line">        print(&quot;完成&quot;)</div><div class="line">    &#125;, onSubscribe: &#123;</div><div class="line">        print(&quot;订阅&quot;)</div><div class="line">    &#125;, onDispose: &#123; </div><div class="line">        print(&quot;释放&quot;)</div><div class="line">    &#125;).subscribe&#123;</div><div class="line">        </div><div class="line">        print($0)</div><div class="line">    &#125;.disposed(by: DisposeBag())</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/Swift/" rel="tag"># Swift</a>
+          
+            <a href="/tags/RxSwift/" rel="tag"># RxSwift</a>
+          
+        </div>
+      
+
+      
+        
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2017/02/22/iOS开发-自定义相机入门/" rel="next" title="iOS开发-自定义相机入门">
+                <i class="fa fa-chevron-left"></i> iOS开发-自定义相机入门
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+  <div class="comments" id="comments">
+    
+      <div class="ds-thread" data-thread-key="2017/03/22/RxSwift（一）Creating and Subscribing to Observables 创建和订阅观察者/"
+           data-title="RxSwift（一）Creating and Subscribing to Observables 创建和订阅观察者" data-url="http://share.ra.com/2017/03/22/RxSwift（一）Creating and Subscribing to Observables 创建和订阅观察者/">
+      </div>
+    
+  </div>
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap" >
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+          <img class="site-author-image" itemprop="image"
+               src="/uploads/avatar.jpg"
+               alt="敖老黑" />
+          <p class="site-author-name" itemprop="name">敖老黑</p>
+           
+              <p class="site-description motion-element" itemprop="description">技术分享</p>
+          
+        </div>
+        <nav class="site-state motion-element">
+
+          
+            <div class="site-state-item site-state-posts">
+              <a href="/archives">
+                <span class="site-state-item-count">4</span>
+                <span class="site-state-item-name">日志</span>
+              </a>
+            </div>
+          
+
+          
+            
+            
+            <div class="site-state-item site-state-categories">
+              <a href="/categories/index.html">
+                <span class="site-state-item-count">2</span>
+                <span class="site-state-item-name">分类</span>
+              </a>
+            </div>
+          
+
+          
+            
+            
+            <div class="site-state-item site-state-tags">
+              <a href="/tags/index.html">
+                <span class="site-state-item-count">5</span>
+                <span class="site-state-item-name">标签</span>
+              </a>
+            </div>
+          
+
+        </nav>
+
+        
+
+        <div class="links-of-author motion-element">
+          
+            
+              <span class="links-of-author-item">
+                <a href="https://github.com/RockyAo" target="_blank" title="GitHub">
+                  
+                    <i class="fa fa-fw fa-github"></i>
+                  
+                  GitHub
+                </a>
+              </span>
+            
+              <span class="links-of-author-item">
+                <a href="https://twitter.com/CGSizeMake" target="_blank" title="Twitter">
+                  
+                    <i class="fa fa-fw fa-twitter"></i>
+                  
+                  Twitter
+                </a>
+              </span>
+            
+              <span class="links-of-author-item">
+                <a href="http://weibo.com/5357889389/profile?rightmod=1&wvr=6&mod=personinfo" target="_blank" title="Weibo">
+                  
+                    <i class="fa fa-fw fa-weibo"></i>
+                  
+                  Weibo
+                </a>
+              </span>
+            
+          
+        </div>
+
+        
+        
+
+        
+        
+
+        
+
+
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#Observable"><span class="nav-number">1.</span> <span class="nav-text">Observable</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#初始化playground"><span class="nav-number">2.</span> <span class="nav-text">初始化playground</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#never"><span class="nav-number">3.</span> <span class="nav-text">never</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#empty"><span class="nav-number">4.</span> <span class="nav-text">empty</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#just"><span class="nav-number">5.</span> <span class="nav-text">just:</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#of"><span class="nav-number">6.</span> <span class="nav-text">of</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#from"><span class="nav-number">7.</span> <span class="nav-text">from</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#create"><span class="nav-number">8.</span> <span class="nav-text">create</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#range"><span class="nav-number">9.</span> <span class="nav-text">range</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#repeatElement"><span class="nav-number">10.</span> <span class="nav-text">repeatElement</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#generate"><span class="nav-number">11.</span> <span class="nav-text">generate</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#deferred"><span class="nav-number">12.</span> <span class="nav-text">deferred</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#error"><span class="nav-number">13.</span> <span class="nav-text">error</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#doOn"><span class="nav-number">14.</span> <span class="nav-text">doOn</span></a></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright" >
+  
+  &copy; 
+  <span itemprop="copyrightYear">2017</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">敖老黑</span>
+</div>
+
+
+<div class="powered-by">
+  由 <a class="theme-link" href="https://hexo.io">Hexo</a> 强力驱动
+</div>
+
+<div class="theme-info">
+  主题 -
+  <a class="theme-link" href="https://github.com/iissnan/hexo-theme-next">
+    NexT.Mist
+  </a>
+</div>
+
+
+        
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+  
+  <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+
+  
+  <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+
+  
+  <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.0"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.0"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.0"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.0"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.0"></script>
+
+
+
+  
+
+  
+    
+  
+
+  <script type="text/javascript">
+    var duoshuoQuery = {short_name:"helloc"};
+    (function() {
+      var ds = document.createElement('script');
+      ds.type = 'text/javascript';ds.async = true;
+      ds.id = 'duoshuo-script';
+      ds.src = (document.location.protocol == 'https:' ? 'https:' : 'http:') + '//static.duoshuo.com/embed.js';
+      ds.charset = 'UTF-8';
+      (document.getElementsByTagName('head')[0]
+      || document.getElementsByTagName('body')[0]).appendChild(ds);
+    })();
+  </script>
+
+  
+    
+    
+    <script src="/lib/ua-parser-js/dist/ua-parser.min.js?v=0.7.9"></script>
+    <script src="/js/src/hook-duoshuo.js"></script>
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+  <script src="https://cdn1.lncld.net/static/js/av-core-mini-0.6.1.js"></script>
+  <script>AV.initialize("iotCMn6bsX6mradrIyTWMyXI-gzGzoHsz", "f5bwNMQ04gmiEsX1uVPGkoGf");</script>
+  <script>
+    function showTime(Counter) {
+      var query = new AV.Query(Counter);
+      var entries = [];
+      var $visitors = $(".leancloud_visitors");
+
+      $visitors.each(function () {
+        entries.push( $(this).attr("id").trim() );
+      });
+
+      query.containedIn('url', entries);
+      query.find()
+        .done(function (results) {
+          var COUNT_CONTAINER_REF = '.leancloud-visitors-count';
+
+          if (results.length === 0) {
+            $visitors.find(COUNT_CONTAINER_REF).text(0);
+            return;
+          }
+
+          for (var i = 0; i < results.length; i++) {
+            var item = results[i];
+            var url = item.get('url');
+            var time = item.get('time');
+            var element = document.getElementById(url);
+
+            $(element).find(COUNT_CONTAINER_REF).text(time);
+          }
+          for(var i = 0; i < entries.length; i++) {
+            var url = entries[i];
+            var element = document.getElementById(url);
+            var countSpan = $(element).find(COUNT_CONTAINER_REF);
+            if( countSpan.text() == '') {
+              countSpan.text(0);
+            }
+          }
+        })
+        .fail(function (object, error) {
+          console.log("Error: " + error.code + " " + error.message);
+        });
+    }
+
+    function addCount(Counter) {
+      var $visitors = $(".leancloud_visitors");
+      var url = $visitors.attr('id').trim();
+      var title = $visitors.attr('data-flag-title').trim();
+      var query = new AV.Query(Counter);
+
+      query.equalTo("url", url);
+      query.find({
+        success: function(results) {
+          if (results.length > 0) {
+            var counter = results[0];
+            counter.fetchWhenSave(true);
+            counter.increment("time");
+            counter.save(null, {
+              success: function(counter) {
+                var $element = $(document.getElementById(url));
+                $element.find('.leancloud-visitors-count').text(counter.get('time'));
+              },
+              error: function(counter, error) {
+                console.log('Failed to save Visitor num, with error message: ' + error.message);
+              }
+            });
+          } else {
+            var newcounter = new Counter();
+            /* Set ACL */
+            var acl = new AV.ACL();
+            acl.setPublicReadAccess(true);
+            acl.setPublicWriteAccess(true);
+            newcounter.setACL(acl);
+            /* End Set ACL */
+            newcounter.set("title", title);
+            newcounter.set("url", url);
+            newcounter.set("time", 1);
+            newcounter.save(null, {
+              success: function(newcounter) {
+                var $element = $(document.getElementById(url));
+                $element.find('.leancloud-visitors-count').text(newcounter.get('time'));
+              },
+              error: function(newcounter, error) {
+                console.log('Failed to create');
+              }
+            });
+          }
+        },
+        error: function(error) {
+          console.log('Error:' + error.code + " " + error.message);
+        }
+      });
+    }
+
+    $(function() {
+      var Counter = AV.Object.extend("Counter");
+      if ($('.leancloud_visitors').length == 1) {
+        addCount(Counter);
+      } else if ($('.post-title-link').length > 1) {
+        showTime(Counter);
+      }
+    });
+  </script>
+
+
+
+  
+
+  
+
+  
+
+</body>
+</html>
