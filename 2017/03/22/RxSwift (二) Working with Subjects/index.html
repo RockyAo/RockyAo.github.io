@@ -1,23 +1,926 @@
-<html>
-  <head>
-    <meta http-equiv="content-type" content="text/html; charset=utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=0">
-    <meta name="google" value="notranslate">
-    <meta name="apple-mobile-web-app-title" content="敖老黑">
-    <meta name="apple-mobile-web-app-capable" content="yes">
-    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-    <meta name="format-detection" content="telephone=no">
-    <meta name="theme-color" content="#36534e">
-    <base href="/">
-    <title>RxSwift (二) Working with Subjects - 如果全世界都说C语言</title>
-    <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico">
-    <link rel="apple-touch-icon" href="/favicon.ico">
-    
-    <link href="styles.073d77000636fd0bc426.bundle.css" rel="stylesheet">
-  </head>
-<body>
-  <is-root></is-root>
-  <script src="inline.9faad2dd9cf1e413d5b0.bundle.js"></script><script src="polyfills.2d8c615085672eb259db.bundle.js"></script><script src="main.9115ab25e251967a6b58.bundle.js"></script>
+<!doctype html>
+
+
+
   
+
+
+<html class="theme-next mist use-motion" lang="zh-Hans">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+  
+  
+  
+  
+
+  
+    
+    
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+    
+    
+    <link href="//fonts.googleapis.com/css?family=Lato:300,300italic,400,400italic,700,700italic&subset=latin,latin-ext" rel="stylesheet" type="text/css">
+  
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.0" rel="stylesheet" type="text/css" />
+
+
+  <meta name="keywords" content="Swift,RxSwift," />
+
+
+
+
+
+
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico?v=5.1.0" />
+
+
+
+
+
+
+<meta name="description" content="首先在playground 中给ObervableType增加一个扩展。方便查看子类订阅时发生的变化
+123456789101112131415161718extension ObservableType&amp;#123;    ///给每一个观察者增加一个id。并打印id和发射的事件    func addObservable(_ id:String) -&amp;gt; Disposable &amp;#123;">
+<meta property="og:type" content="article">
+<meta property="og:title" content="RxSwift (二) Working with Subjects">
+<meta property="og:url" content="http://share.ra.com/2017/03/22/RxSwift (二) Working with Subjects/index.html">
+<meta property="og:site_name" content="如果全世界都说C语言">
+<meta property="og:description" content="首先在playground 中给ObervableType增加一个扩展。方便查看子类订阅时发生的变化
+123456789101112131415161718extension ObservableType&amp;#123;    ///给每一个观察者增加一个id。并打印id和发射的事件    func addObservable(_ id:String) -&amp;gt; Disposable &amp;#123;">
+<meta property="og:updated_time" content="2017-03-22T06:35:00.000Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="RxSwift (二) Working with Subjects">
+<meta name="twitter:description" content="首先在playground 中给ObervableType增加一个扩展。方便查看子类订阅时发生的变化
+123456789101112131415161718extension ObservableType&amp;#123;    ///给每一个观察者增加一个id。并打印id和发射的事件    func addObservable(_ id:String) -&amp;gt; Disposable &amp;#123;">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Mist',
+    sidebar: {"position":"left","display":"post","offset":12,"offset_float":0,"b2t":false,"scrollpercent":false},
+    fancybox: true,
+    motion: true,
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://share.ra.com/2017/03/22/RxSwift (二) Working with Subjects/"/>
+
+
+
+
+
+  <title> RxSwift (二) Working with Subjects | 如果全世界都说C语言 </title>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail ">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">如果全世界都说C语言</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle"></p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br />
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br />
+            
+            标签
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-user"></i> <br />
+            
+            关于
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+    <link itemprop="mainEntityOfPage" href="http://share.ra.com/2017/03/22/RxSwift (二) Working with Subjects/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="敖老黑">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/uploads/avatar.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="如果全世界都说C语言">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+            
+            
+              
+                RxSwift (二) Working with Subjects
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2017-03-22T14:09:33+08:00">
+                2017-03-22
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/iOS/" itemprop="url" rel="index">
+                    <span itemprop="name">iOS</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+              <span class="post-comments-count">
+                <span class="post-meta-divider">|</span>
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-comment-o"></i>
+                </span>
+                <a href="/2017/03/22/RxSwift (二) Working with Subjects/#comments" itemprop="discussionUrl">
+                  <span class="post-comments-count disqus-comment-count" data-disqus-identifier="2017/03/22/RxSwift (二) Working with Subjects/" itemprop="commentCount"></span>
+                </a>
+              </span>
+            
+          
+
+          
+          
+             <span id="/2017/03/22/RxSwift (二) Working with Subjects/" class="leancloud_visitors" data-flag-title="RxSwift (二) Working with Subjects">
+               <span class="post-meta-divider">|</span>
+               <span class="post-meta-item-icon">
+                 <i class="fa fa-eye"></i>
+               </span>
+               
+                 <span class="post-meta-item-text">阅读次数 </span>
+               
+                 <span class="leancloud-visitors-count"></span>
+             </span>
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <p>首先在playground 中给ObervableType增加一个扩展。方便查看子类订阅时发生的变化</p>
+<figure class="highlight swift"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div></pre></td><td class="code"><pre><div class="line"><span class="class"><span class="keyword">extension</span> <span class="title">ObservableType</span></span>&#123;</div><div class="line"></div><div class="line">    <span class="comment">///给每一个观察者增加一个id。并打印id和发射的事件</span></div><div class="line">    <span class="function"><span class="keyword">func</span> <span class="title">addObservable</span><span class="params">(<span class="number">_</span> id:String)</span></span> -&gt; <span class="type">Disposable</span> &#123;</div><div class="line">        </div><div class="line">        <span class="keyword">return</span> subscribe&#123;</div><div class="line">        </div><div class="line">            <span class="built_in">print</span>(<span class="string">"Subscription:"</span>, id, <span class="string">"Event:"</span>, $<span class="number">0</span>)</div><div class="line">        &#125;</div><div class="line">    &#125;</div><div class="line">&#125;</div><div class="line"></div><div class="line"></div><div class="line"><span class="function"><span class="keyword">func</span> <span class="title">writeSequenceToConsole</span>&lt;O: ObservableType&gt;<span class="params">(name: String, sequence: O)</span></span> -&gt; <span class="type">Disposable</span> &#123;</div><div class="line">    <span class="keyword">return</span> sequence.subscribe &#123; event <span class="keyword">in</span></div><div class="line">        <span class="built_in">print</span>(<span class="string">"Subscription: <span class="subst">\(name)</span>, event: <span class="subst">\(event)</span>"</span>)</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<h2 id="PublishSubject"><a href="#PublishSubject" class="headerlink" title="PublishSubject"></a>PublishSubject</h2><p>PublishSubject只会把在订阅发生的时间点之后来自原始Observable的数据发射给观察者。</p>
+<figure class="highlight swift"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div></pre></td><td class="code"><pre><div class="line">exampleOf(description: <span class="string">"PublishSubject"</span>) &#123; </div><div class="line">    </div><div class="line">    <span class="keyword">let</span> disposeBag = <span class="type">DisposeBag</span>()</div><div class="line">    </div><div class="line">    <span class="keyword">let</span> publishSubject = <span class="type">PublishSubject</span>&lt;<span class="type">String</span>&gt;()</div><div class="line">    </div><div class="line">    <span class="comment">///第一组</span></div><div class="line">    publishSubject.addObservable(<span class="string">"no.1"</span>).disposed(by: disposeBag)</div><div class="line">    </div><div class="line">    publishSubject.onNext(<span class="string">"2"</span>)</div><div class="line">    </div><div class="line">    publishSubject.onNext(<span class="string">"3"</span>)</div><div class="line">    </div><div class="line">    <span class="comment">//第二组</span></div><div class="line">    publishSubject.addObservable(<span class="string">"no.2"</span>).disposed(by: disposeBag)</div><div class="line">    </div><div class="line">    publishSubject.onNext(<span class="string">"🐱"</span>)</div><div class="line">    </div><div class="line">    publishSubject.onNext(<span class="string">"🐶"</span>)</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>打印结果如下</p>
+<figure class="highlight swift"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div></pre></td><td class="code"><pre><div class="line">------exampleOf:<span class="type">PublishSubject</span>------</div><div class="line"><span class="type">Subscription</span>: no.<span class="number">1</span> <span class="type">Event</span>: next(<span class="number">2</span>)</div><div class="line"><span class="type">Subscription</span>: no.<span class="number">1</span> <span class="type">Event</span>: next(<span class="number">3</span>)</div><div class="line"><span class="type">Subscription</span>: no.<span class="number">1</span> <span class="type">Event</span>: next(🐱)</div><div class="line"><span class="type">Subscription</span>: no.<span class="number">2</span> <span class="type">Event</span>: next(🐱)</div><div class="line"><span class="type">Subscription</span>: no.<span class="number">1</span> <span class="type">Event</span>: next(🐶)</div><div class="line"><span class="type">Subscription</span>: no.<span class="number">2</span> <span class="type">Event</span>: next(🐶)</div></pre></td></tr></table></figure>
+<p>可以看no.2 并没有收到no.2订阅之前发送的信号（2和3）。</p>
+<h2 id="ReplaySubject"><a href="#ReplaySubject" class="headerlink" title="ReplaySubject"></a>ReplaySubject</h2><p>ReplaySubject会发射所有来自原始Observable的数据给观察者，无论它们是何时订阅的。也 有其它版本的ReplaySubject，在重放缓存增长到一定大小的时候或过了一段时间后会丢弃旧 的数据(原始Observable发射的)。</p>
+<figure class="highlight swift"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div></pre></td><td class="code"><pre><div class="line">exampleOf(description: <span class="string">"replaySubject"</span>) &#123; </div><div class="line">    </div><div class="line">    <span class="keyword">let</span> disposeBag = <span class="type">DisposeBag</span>()</div><div class="line">    </div><div class="line">    <span class="keyword">let</span> replaySubject = <span class="type">ReplaySubject</span>&lt;<span class="type">String</span>&gt;.create(bufferSize: <span class="number">2</span>)</div><div class="line">    </div><div class="line">    replaySubject.addObservable(<span class="string">"no.1"</span>).disposed(by: disposeBag)</div><div class="line">    </div><div class="line">    replaySubject.onNext(<span class="string">"第一个事件"</span>)</div><div class="line">    </div><div class="line">    replaySubject.onNext(<span class="string">"第二个事件"</span>)</div><div class="line"></div><div class="line">    </div><div class="line">    </div><div class="line">    replaySubject.addObservable(<span class="string">"no.2"</span>).disposed(by: disposeBag)</div><div class="line">    </div><div class="line">    replaySubject.onNext(<span class="string">"3"</span>)</div><div class="line">    </div><div class="line">    replaySubject.onNext(<span class="string">"4"</span>)</div><div class="line">    </div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>打印结果如下</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div></pre></td><td class="code"><pre><div class="line">------exampleOf:replaySubject------</div><div class="line">Subscription: no.1 Event: next(第一个事件)</div><div class="line">Subscription: no.1 Event: next(第二个事件)</div><div class="line">Subscription: no.2 Event: next(第一个事件)</div><div class="line">Subscription: no.2 Event: next(第二个事件)</div><div class="line">Subscription: no.1 Event: next(3)</div><div class="line">Subscription: no.2 Event: next(3)</div><div class="line">Subscription: no.1 Event: next(4)</div><div class="line">Subscription: no.2 Event: next(4)</div></pre></td></tr></table></figure>
+<p>会将订阅之前的信号发给新订阅者。如果指定了buttersize,会根据buttersize（我理解为多少个）发送之前的数据</p>
+<h2 id="BehaviorSubject"><a href="#BehaviorSubject" class="headerlink" title="BehaviorSubject"></a>BehaviorSubject</h2><p>当观察者订阅BehaviorSubject时，它开始发射原始Observable最近发射的数据(如果此时还 没有收到任何数据，它会发射一个默认值)，然后继续发射其它任何来自原始Observable的 数据。</p>
+<figure class="highlight swift"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div></pre></td><td class="code"><pre><div class="line">exampleOf(description: <span class="string">"BehaviorSubject"</span>) &#123; </div><div class="line">    </div><div class="line">    <span class="keyword">let</span> disposeBag = <span class="type">DisposeBag</span>()</div><div class="line">    </div><div class="line">    <span class="keyword">let</span> subject = <span class="type">BehaviorSubject</span>(value: <span class="string">"behavior"</span>)</div><div class="line">    </div><div class="line">    subject.addObservable(<span class="string">"第一个响应"</span>).disposed(by: disposeBag)</div><div class="line">    </div><div class="line">    subject.onNext(<span class="string">"第一个事件"</span>)</div><div class="line">    </div><div class="line">    subject.onNext(<span class="string">"第二个事件"</span>)</div><div class="line">    </div><div class="line">    subject.addObservable(<span class="string">"第二个响应"</span>).disposed(by: disposeBag)</div><div class="line">    </div><div class="line">    subject.onNext(<span class="string">"第三个事件"</span>)</div><div class="line">    </div><div class="line">    subject.onNext(<span class="string">"第四个事件"</span>)</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>打印结果</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div></pre></td><td class="code"><pre><div class="line">------exampleOf:BehaviorSubject------</div><div class="line">Subscription: 第一个响应 Event: next(behavior)</div><div class="line">Subscription: 第一个响应 Event: next(第一个事件)</div><div class="line">Subscription: 第一个响应 Event: next(第二个事件)</div><div class="line">Subscription: 第二个响应 Event: next(第二个事件)</div><div class="line">Subscription: 第一个响应 Event: next(第三个事件)</div><div class="line">Subscription: 第二个响应 Event: next(第三个事件)</div><div class="line">Subscription: 第一个响应 Event: next(第四个事件)</div><div class="line">Subscription: 第二个响应 Event: next(第四个事件)</div></pre></td></tr></table></figure>
+<h2 id="Variable"><a href="#Variable" class="headerlink" title="Variable"></a>Variable</h2><p>Variable是BehaviorSubject的一层封装。特点不会被显式终结。即：不会收到 .Completed 和 .Error 这类的终结事件，它会主动在析构的时候发送 .Complete 。</p>
+<figure class="highlight swift"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div></pre></td><td class="code"><pre><div class="line">exampleOf(description: <span class="string">"Variable"</span>) &#123; </div><div class="line">    </div><div class="line">    <span class="keyword">let</span> disposeBag = <span class="type">DisposeBag</span>()</div><div class="line">    </div><div class="line">    <span class="keyword">let</span> variable = <span class="type">Variable</span>&lt;<span class="type">String</span>&gt;(<span class="string">"默认值"</span>)</div><div class="line">    </div><div class="line">    variable.asObservable().addObservable(<span class="string">"no.1"</span>).disposed(by: disposeBag)</div><div class="line">    </div><div class="line">    variable.value = <span class="string">"第二个值"</span></div><div class="line">    </div><div class="line">    variable.value = <span class="string">"第三个值"</span></div><div class="line">    </div><div class="line">    variable.asObservable().addObservable(<span class="string">"no.2"</span>).disposed(by: disposeBag)</div><div class="line">    </div><div class="line">    variable.value = <span class="string">"第四个值"</span></div><div class="line">    </div><div class="line">    variable.value = <span class="string">"第五个值"</span></div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>打印结果</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div></pre></td><td class="code"><pre><div class="line">------exampleOf:Variable------</div><div class="line">Subscription: no.1 Event: next(默认值)</div><div class="line">Subscription: no.1 Event: next(第二个值)</div><div class="line">Subscription: no.1 Event: next(第三个值)</div><div class="line">Subscription: no.2 Event: next(第三个值)</div><div class="line">Subscription: no.1 Event: next(第四个值)</div><div class="line">Subscription: no.2 Event: next(第四个值)</div><div class="line">Subscription: no.1 Event: next(第五个值)</div><div class="line">Subscription: no.2 Event: next(第五个值)</div><div class="line">Subscription: no.1 Event: completed</div><div class="line">Subscription: no.2 Event: completed</div></pre></td></tr></table></figure>
+<ul>
+<li>Demo地址<a href="https://github.com/RockyAo/RxSwift_learn" target="_blank" rel="external">https://github.com/RockyAo/RxSwift_learn</a>.或者直接看官方的demo</li>
+</ul>
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/Swift/" rel="tag"># Swift</a>
+          
+            <a href="/tags/RxSwift/" rel="tag"># RxSwift</a>
+          
+        </div>
+      
+
+      
+        
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2017/03/22/RxSwift（一）Creating and Subscribing to Observables 创建和订阅观察者/" rel="next" title="RxSwift（一）Creating and Subscribing to Observables 创建和订阅观察者">
+                <i class="fa fa-chevron-left"></i> RxSwift（一）Creating and Subscribing to Observables 创建和订阅观察者
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2017/09/22/设计模式-设计原则/" rel="prev" title="设计模式学习-设计原则">
+                设计模式学习-设计原则 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+  <div class="comments" id="comments">
+    
+      <div id="disqus_thread">
+        <noscript>
+          Please enable JavaScript to view the
+          <a href="//disqus.com/?ref_noscript">comments powered by Disqus.</a>
+        </noscript>
+      </div>
+    
+  </div>
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap" >
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+          <img class="site-author-image" itemprop="image"
+               src="/uploads/avatar.jpg"
+               alt="敖老黑" />
+          <p class="site-author-name" itemprop="name">敖老黑</p>
+           
+              <p class="site-description motion-element" itemprop="description">技术分享</p>
+          
+        </div>
+        <nav class="site-state motion-element">
+
+          
+            <div class="site-state-item site-state-posts">
+              <a href="/archives">
+                <span class="site-state-item-count">8</span>
+                <span class="site-state-item-name">日志</span>
+              </a>
+            </div>
+          
+
+          
+            
+            
+            <div class="site-state-item site-state-categories">
+              <a href="/categories/index.html">
+                <span class="site-state-item-count">2</span>
+                <span class="site-state-item-name">分类</span>
+              </a>
+            </div>
+          
+
+          
+            
+            
+            <div class="site-state-item site-state-tags">
+              <a href="/tags/index.html">
+                <span class="site-state-item-count">5</span>
+                <span class="site-state-item-name">标签</span>
+              </a>
+            </div>
+          
+
+        </nav>
+
+        
+
+        <div class="links-of-author motion-element">
+          
+            
+              <span class="links-of-author-item">
+                <a href="https://github.com/RockyAo" target="_blank" title="GitHub">
+                  
+                    <i class="fa fa-fw fa-github"></i>
+                  
+                  GitHub
+                </a>
+              </span>
+            
+              <span class="links-of-author-item">
+                <a href="https://twitter.com/CGSizeMake" target="_blank" title="Twitter">
+                  
+                    <i class="fa fa-fw fa-twitter"></i>
+                  
+                  Twitter
+                </a>
+              </span>
+            
+              <span class="links-of-author-item">
+                <a href="http://weibo.com/5357889389/profile?rightmod=1&wvr=6&mod=personinfo" target="_blank" title="Weibo">
+                  
+                    <i class="fa fa-fw fa-weibo"></i>
+                  
+                  Weibo
+                </a>
+              </span>
+            
+          
+        </div>
+
+        
+        
+
+        
+        
+
+        
+
+
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#PublishSubject"><span class="nav-number">1.</span> <span class="nav-text">PublishSubject</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#ReplaySubject"><span class="nav-number">2.</span> <span class="nav-text">ReplaySubject</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#BehaviorSubject"><span class="nav-number">3.</span> <span class="nav-text">BehaviorSubject</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Variable"><span class="nav-number">4.</span> <span class="nav-text">Variable</span></a></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright" >
+  
+  &copy; 
+  <span itemprop="copyrightYear">2018</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">敖老黑</span>
+</div>
+
+
+<div class="powered-by">
+  由 <a class="theme-link" href="https://hexo.io">Hexo</a> 强力驱动
+</div>
+
+<div class="theme-info">
+  主题 -
+  <a class="theme-link" href="https://github.com/iissnan/hexo-theme-next">
+    NexT.Mist
+  </a>
+</div>
+
+
+        
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+  
+  <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+
+  
+  <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+
+  
+  <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.0"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.0"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.0"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.0"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.0"></script>
+
+
+
+  
+
+
+
+  
+
+    <script type="text/javascript">
+      var disqus_shortname = 'helloc';
+      var disqus_identifier = '2017/03/22/RxSwift (二) Working with Subjects/';
+
+      var disqus_title = "RxSwift (二) Working with Subjects";
+
+
+      function run_disqus_script(disqus_script) {
+        var dsq = document.createElement('script');
+        dsq.type = 'text/javascript';
+        dsq.async = true;
+        dsq.src = '//' + disqus_shortname + '.disqus.com/' + disqus_script;
+        (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+      }
+
+      run_disqus_script('count.js');
+
+      
+        var disqus_config = function () {
+            this.page.url = disqus_url;
+            this.page.identifier = disqus_identifier;
+            this.page.title = disqus_title;
+        };
+        run_disqus_script('embed.js');
+      
+
+    </script>
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+  <script src="https://cdn1.lncld.net/static/js/av-core-mini-0.6.1.js"></script>
+  <script>AV.initialize("iotCMn6bsX6mradrIyTWMyXI-gzGzoHsz", "f5bwNMQ04gmiEsX1uVPGkoGf");</script>
+  <script>
+    function showTime(Counter) {
+      var query = new AV.Query(Counter);
+      var entries = [];
+      var $visitors = $(".leancloud_visitors");
+
+      $visitors.each(function () {
+        entries.push( $(this).attr("id").trim() );
+      });
+
+      query.containedIn('url', entries);
+      query.find()
+        .done(function (results) {
+          var COUNT_CONTAINER_REF = '.leancloud-visitors-count';
+
+          if (results.length === 0) {
+            $visitors.find(COUNT_CONTAINER_REF).text(0);
+            return;
+          }
+
+          for (var i = 0; i < results.length; i++) {
+            var item = results[i];
+            var url = item.get('url');
+            var time = item.get('time');
+            var element = document.getElementById(url);
+
+            $(element).find(COUNT_CONTAINER_REF).text(time);
+          }
+          for(var i = 0; i < entries.length; i++) {
+            var url = entries[i];
+            var element = document.getElementById(url);
+            var countSpan = $(element).find(COUNT_CONTAINER_REF);
+            if( countSpan.text() == '') {
+              countSpan.text(0);
+            }
+          }
+        })
+        .fail(function (object, error) {
+          console.log("Error: " + error.code + " " + error.message);
+        });
+    }
+
+    function addCount(Counter) {
+      var $visitors = $(".leancloud_visitors");
+      var url = $visitors.attr('id').trim();
+      var title = $visitors.attr('data-flag-title').trim();
+      var query = new AV.Query(Counter);
+
+      query.equalTo("url", url);
+      query.find({
+        success: function(results) {
+          if (results.length > 0) {
+            var counter = results[0];
+            counter.fetchWhenSave(true);
+            counter.increment("time");
+            counter.save(null, {
+              success: function(counter) {
+                var $element = $(document.getElementById(url));
+                $element.find('.leancloud-visitors-count').text(counter.get('time'));
+              },
+              error: function(counter, error) {
+                console.log('Failed to save Visitor num, with error message: ' + error.message);
+              }
+            });
+          } else {
+            var newcounter = new Counter();
+            /* Set ACL */
+            var acl = new AV.ACL();
+            acl.setPublicReadAccess(true);
+            acl.setPublicWriteAccess(true);
+            newcounter.setACL(acl);
+            /* End Set ACL */
+            newcounter.set("title", title);
+            newcounter.set("url", url);
+            newcounter.set("time", 1);
+            newcounter.save(null, {
+              success: function(newcounter) {
+                var $element = $(document.getElementById(url));
+                $element.find('.leancloud-visitors-count').text(newcounter.get('time'));
+              },
+              error: function(newcounter, error) {
+                console.log('Failed to create');
+              }
+            });
+          }
+        },
+        error: function(error) {
+          console.log('Error:' + error.code + " " + error.message);
+        }
+      });
+    }
+
+    $(function() {
+      var Counter = AV.Object.extend("Counter");
+      if ($('.leancloud_visitors').length == 1) {
+        addCount(Counter);
+      } else if ($('.post-title-link').length > 1) {
+        showTime(Counter);
+      }
+    });
+  </script>
+
+
+
+  
+
+  
+
+  
+
 </body>
 </html>
