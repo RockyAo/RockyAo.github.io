@@ -1,0 +1,1007 @@
+<!doctype html>
+
+
+
+  
+
+
+<html class="theme-next mist use-motion" lang="zh-Hans">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+  
+  
+  
+  
+
+  
+    
+    
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+    
+    
+    <link href="//fonts.googleapis.com/css?family=Lato:300,300italic,400,400italic,700,700italic&subset=latin,latin-ext" rel="stylesheet" type="text/css">
+  
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.0" rel="stylesheet" type="text/css" />
+
+
+  <meta name="keywords" content="Swift,DesignPattern," />
+
+
+
+
+
+
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico?v=5.1.0" />
+
+
+
+
+
+
+<meta name="description" content="对象池模式基本概念对象池模式一般用来管理一组可重用对象，以供调用组件使用，它可以为组件提供多个完全相同的对象。组件可以从对象池中获取对象,调用对象后,其他组件在该对象想归还前都无法使用该对象。（Cocoa中 UITableViewCell的重用机制可以通过此模式和工厂模式共同实现）
+
+好处
+
+对象构建过程隐藏
+对象池通过重用机制有效控制对象反复重建造成的消耗。更好的控制内存
+
+实现过程
+
+初始化，">
+<meta property="og:type" content="article">
+<meta property="og:title" content="设计模式学习-对象池模式">
+<meta property="og:url" content="http://share.ra.com/2017/12/22/设计模式-对象池模式/index.html">
+<meta property="og:site_name" content="如果全世界都说C语言">
+<meta property="og:description" content="对象池模式基本概念对象池模式一般用来管理一组可重用对象，以供调用组件使用，它可以为组件提供多个完全相同的对象。组件可以从对象池中获取对象,调用对象后,其他组件在该对象想归还前都无法使用该对象。（Cocoa中 UITableViewCell的重用机制可以通过此模式和工厂模式共同实现）
+
+好处
+
+对象构建过程隐藏
+对象池通过重用机制有效控制对象反复重建造成的消耗。更好的控制内存
+
+实现过程
+
+初始化，">
+<meta property="og:updated_time" content="2018-01-29T10:43:11.019Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="设计模式学习-对象池模式">
+<meta name="twitter:description" content="对象池模式基本概念对象池模式一般用来管理一组可重用对象，以供调用组件使用，它可以为组件提供多个完全相同的对象。组件可以从对象池中获取对象,调用对象后,其他组件在该对象想归还前都无法使用该对象。（Cocoa中 UITableViewCell的重用机制可以通过此模式和工厂模式共同实现）
+
+好处
+
+对象构建过程隐藏
+对象池通过重用机制有效控制对象反复重建造成的消耗。更好的控制内存
+
+实现过程
+
+初始化，">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Mist',
+    sidebar: {"position":"left","display":"post","offset":12,"offset_float":0,"b2t":false,"scrollpercent":false},
+    fancybox: true,
+    motion: true,
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://share.ra.com/2017/12/22/设计模式-对象池模式/"/>
+
+
+
+
+
+  <title> 设计模式学习-对象池模式 | 如果全世界都说C语言 </title>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail ">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">如果全世界都说C语言</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle"></p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br />
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br />
+            
+            标签
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-user"></i> <br />
+            
+            关于
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+    <link itemprop="mainEntityOfPage" href="http://share.ra.com/2017/12/22/设计模式-对象池模式/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="敖老黑">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/uploads/avatar.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="如果全世界都说C语言">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+            
+            
+              
+                设计模式学习-对象池模式
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2017-12-22T22:50:40+08:00">
+                2017-12-22
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/iOS/" itemprop="url" rel="index">
+                    <span itemprop="name">iOS</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+              <span class="post-comments-count">
+                <span class="post-meta-divider">|</span>
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-comment-o"></i>
+                </span>
+                <a href="/2017/12/22/设计模式-对象池模式/#comments" itemprop="discussionUrl">
+                  <span class="post-comments-count disqus-comment-count" data-disqus-identifier="2017/12/22/设计模式-对象池模式/" itemprop="commentCount"></span>
+                </a>
+              </span>
+            
+          
+
+          
+          
+             <span id="/2017/12/22/设计模式-对象池模式/" class="leancloud_visitors" data-flag-title="设计模式学习-对象池模式">
+               <span class="post-meta-divider">|</span>
+               <span class="post-meta-item-icon">
+                 <i class="fa fa-eye"></i>
+               </span>
+               
+                 <span class="post-meta-item-text">阅读次数 </span>
+               
+                 <span class="leancloud-visitors-count"></span>
+             </span>
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h1 id="对象池模式"><a href="#对象池模式" class="headerlink" title="对象池模式"></a>对象池模式</h1><h2 id="基本概念"><a href="#基本概念" class="headerlink" title="基本概念"></a>基本概念</h2><p>对象池模式一般用来管理一组可重用对象，以供调用组件使用，它可以为组件提供多个完全相同的对象。组件可以从对象池中获取对象,调用对象后,其他组件在该对象想归还前都无法使用该对象。（Cocoa中 UITableViewCell的重用机制可以通过此模式和工厂模式共同实现）</p>
+<blockquote>
+<p>好处</p>
+<ul>
+<li>对象构建过程隐藏</li>
+<li>对象池通过重用机制有效控制对象反复重建造成的消耗。更好的控制内存</li>
+</ul>
+<p>实现过程</p>
+<ul>
+<li>初始化，准备需要的对象集合</li>
+<li>借出对象，需要对象的组件从池子中借出对象</li>
+<li>组件使用借到的对象完成任务，对象池保证这个对象在其被归还之前不会再借给其他组件</li>
+<li>组件返回对象给对象池</li>
+</ul>
+</blockquote>
+<p><strong>注意：</strong></p>
+<p><strong>1、在多线程访问中保护对象池数据数组</strong></p>
+<p><strong>2、确保每次请求都能获得可用对象</strong></p>
+<p>代码示例：</p>
+<p>下面代码将模拟一个简单的图书管理过程，包含图书出借和归还等。创建一个macos 命令行项目命名为ObjectPool</p>
+<ul>
+<li><p>首先构造 Book类</p>
+<figure class="highlight swift"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div></pre></td><td class="code"><pre><div class="line"><span class="class"><span class="keyword">class</span> <span class="title">Book</span> </span>&#123;</div><div class="line">    <span class="keyword">let</span> author:<span class="type">String</span></div><div class="line">    <span class="keyword">let</span> title:<span class="type">String</span></div><div class="line">    <span class="keyword">let</span> stockNumber:<span class="type">Int</span></div><div class="line">    <span class="keyword">var</span> reader:<span class="type">String</span>?</div><div class="line">    <span class="keyword">var</span> checkoutCount = <span class="number">0</span></div><div class="line">    </div><div class="line">    <span class="keyword">init</span>(author:<span class="type">String</span>,title:<span class="type">String</span>,stock:<span class="type">Int</span>) &#123;</div><div class="line">        <span class="keyword">self</span>.author = author</div><div class="line">        <span class="keyword">self</span>.title = title</div><div class="line">        <span class="keyword">self</span>.stockNumber = stock</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+</li>
+<li><p>创建Pool类，这里pool类仅代表对象池。为了方便复用，使用泛型创建。以便可以管理任何类型的对象</p>
+</li>
+</ul>
+<figure class="highlight swift"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div></pre></td><td class="code"><pre><div class="line"><span class="comment">//Pool.swift</span></div><div class="line"><span class="class"><span class="keyword">class</span> <span class="title">Pool</span>&lt;<span class="title">T</span>&gt; </span>&#123;</div><div class="line">    <span class="keyword">private</span> <span class="keyword">var</span> data:[<span class="type">T</span>] = []</div><div class="line">    </div><div class="line">    <span class="keyword">init</span>(items:[<span class="type">T</span>]) &#123;</div><div class="line">        data.reserveCapacity(data.<span class="built_in">count</span>)</div><div class="line">        data.append(contentsOf: items)</div><div class="line">    &#125;</div><div class="line">    </div><div class="line">    <span class="function"><span class="keyword">func</span> <span class="title">getFromPool</span><span class="params">()</span></span> -&gt; <span class="type">T</span>? &#123;</div><div class="line">        </div><div class="line">        <span class="keyword">if</span> data.<span class="built_in">count</span> &gt; <span class="number">0</span> &#123;</div><div class="line">            <span class="keyword">return</span> data.remove(at: <span class="number">0</span>)</div><div class="line">        &#125;</div><div class="line">        </div><div class="line">        <span class="keyword">return</span> <span class="literal">nil</span></div><div class="line">    &#125;</div><div class="line">    </div><div class="line">    <span class="function"><span class="keyword">func</span> <span class="title">returnPool</span><span class="params">(item:T)</span></span> &#123;</div><div class="line">        <span class="keyword">self</span>.data.append(item)</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>修改pool类加入线程保护</p>
+<figure class="highlight swift"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div></pre></td><td class="code"><pre><div class="line"><span class="class"><span class="keyword">class</span> <span class="title">Pool</span>&lt;<span class="title">T</span>&gt; </span>&#123;</div><div class="line">    <span class="keyword">private</span> <span class="keyword">var</span> data:[<span class="type">T</span>] = []</div><div class="line">    </div><div class="line">    <span class="keyword">private</span> <span class="keyword">let</span> dataProtectQueue = <span class="type">DispatchQueue</span>(label: <span class="string">"com.ra.ObjectPool.Pool.DataProtectQueue"</span>)</div><div class="line">    </div><div class="line">    <span class="keyword">private</span> <span class="keyword">let</span> semaphore:<span class="type">DispatchSemaphore</span></div><div class="line">    </div><div class="line">    </div><div class="line">    <span class="keyword">init</span>(items:[<span class="type">T</span>]) &#123;</div><div class="line">        data.reserveCapacity(data.<span class="built_in">count</span>)</div><div class="line">        data.append(contentsOf: items)</div><div class="line">        <span class="keyword">self</span>.semaphore = <span class="type">DispatchSemaphore</span>(value: items.<span class="built_in">count</span>)</div><div class="line">    &#125;</div><div class="line">    </div><div class="line">    <span class="function"><span class="keyword">func</span> <span class="title">getFromPool</span><span class="params">()</span></span> -&gt; <span class="type">T</span>? &#123;</div><div class="line">        </div><div class="line">        <span class="keyword">var</span> result:<span class="type">T</span>?</div><div class="line">        </div><div class="line">        <span class="keyword">if</span> semaphore.wait(timeout: <span class="type">DispatchTime</span>.distantFuture) == .success&#123;</div><div class="line">            dataProtectQueue.sync &#123;</div><div class="line">                result = <span class="keyword">self</span>.data.remove(at: <span class="number">0</span>)</div><div class="line">            &#125;</div><div class="line">        &#125;</div><div class="line">        </div><div class="line">        <span class="keyword">return</span> result</div><div class="line">    &#125;</div><div class="line">    </div><div class="line">    <span class="function"><span class="keyword">func</span> <span class="title">returnPool</span><span class="params">(item:T)</span></span> &#123;</div><div class="line">        dataProtectQueue.async &#123;</div><div class="line">            <span class="keyword">self</span>.data.append(item)</div><div class="line">            <span class="keyword">self</span>.semaphore.signal()</div><div class="line">        &#125;</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<ul>
+<li>构造library单例类，用于管理图书</li>
+</ul>
+<figure class="highlight swift"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">final</span> <span class="class"><span class="keyword">class</span> <span class="title">Library</span></span>&#123;</div><div class="line">    </div><div class="line">    <span class="keyword">static</span> <span class="keyword">let</span> shared:<span class="type">Library</span> = <span class="type">Library</span>(stockLevel: <span class="number">2</span>)</div><div class="line">    </div><div class="line">    <span class="keyword">private</span> <span class="keyword">var</span> books:[<span class="type">Book</span>] = []</div><div class="line">    <span class="keyword">private</span> <span class="keyword">var</span> pool:<span class="type">Pool</span>&lt;<span class="type">Book</span>&gt;</div><div class="line">    </div><div class="line">    <span class="keyword">private</span> <span class="keyword">init</span>(stockLevel:<span class="type">Int</span>)&#123;</div><div class="line">        <span class="keyword">for</span> <span class="built_in">count</span> <span class="keyword">in</span> <span class="number">1</span>...stockLevel &#123;</div><div class="line">            <span class="keyword">let</span> book = <span class="type">Book</span>(author: <span class="string">"xxxx"</span>, title: <span class="string">"Design Pattern in Swift"</span>, stock: <span class="built_in">count</span>)</div><div class="line">            books.append(book)</div><div class="line">        &#125;</div><div class="line">        </div><div class="line">        <span class="keyword">self</span>.pool = <span class="type">Pool</span>(items: books)</div><div class="line">    &#125;</div><div class="line">    </div><div class="line">    <span class="function"><span class="keyword">func</span> <span class="title">checkoutBook</span><span class="params">(reader:String)</span></span> -&gt; <span class="type">Book</span>? &#123;</div><div class="line">        <span class="keyword">let</span> book = pool.getFromPool()</div><div class="line">        book?.reader = reader</div><div class="line">        book?.checkoutCount += <span class="number">1</span></div><div class="line">        <span class="keyword">return</span> book</div><div class="line">    &#125;</div><div class="line">    </div><div class="line">    <span class="function"><span class="keyword">func</span> <span class="title">returnBook</span><span class="params">(<span class="number">_</span> book:Book)</span></span> &#123;</div><div class="line">        book.reader = <span class="literal">nil</span></div><div class="line">        pool.returnPool(item: book)</div><div class="line">    &#125;</div><div class="line">    </div><div class="line">    <span class="function"><span class="keyword">func</span> <span class="title">printReport</span><span class="params">()</span></span> &#123;</div><div class="line">        books.forEach &#123; (book) <span class="keyword">in</span></div><div class="line">            <span class="built_in">print</span>(<span class="string">"....Book#<span class="subst">\(book.stockNumber)</span>...."</span>)</div><div class="line">            <span class="built_in">print</span>(<span class="string">"Checked out to <span class="subst">\(book.checkoutCount)</span> times "</span>)</div><div class="line">            <span class="keyword">if</span> <span class="keyword">let</span> reader = book.reader&#123;</div><div class="line">                <span class="built_in">print</span>(<span class="string">"Checked out to <span class="subst">\(reader)</span>"</span>)</div><div class="line">            &#125;<span class="keyword">else</span>&#123;</div><div class="line">                <span class="built_in">print</span>(<span class="string">"in stock"</span>)</div><div class="line">            &#125;</div><div class="line">        &#125;</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>然后在main.swift中做一个简单调用</p>
+<figure class="highlight swift"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">let</span> queue = <span class="type">DispatchQueue</span>(label: <span class="string">"work.queue"</span>, qos: <span class="type">DispatchQoS</span>.<span class="keyword">default</span>, attributes: .concurrent)</div><div class="line"><span class="keyword">let</span> group = <span class="type">DispatchGroup</span>()</div><div class="line"></div><div class="line"><span class="built_in">print</span>(<span class="string">"start"</span>)</div><div class="line"></div><div class="line"><span class="keyword">for</span> i <span class="keyword">in</span> <span class="number">0</span>..&lt;<span class="number">20</span>&#123;</div><div class="line"></div><div class="line">    <span class="keyword">let</span> workItem = <span class="type">DispatchWorkItem</span>(block: &#123;</div><div class="line">        <span class="keyword">if</span> <span class="keyword">let</span> book = <span class="type">Library</span>.shared.checkoutBook(reader: <span class="string">"reader#<span class="subst">\(i)</span>"</span>)&#123;</div><div class="line">            <span class="type">Thread</span>.sleep(forTimeInterval: <span class="type">TimeInterval</span>(arc4random() % <span class="number">2</span>))</div><div class="line">            <span class="type">Library</span>.shared.returnBook(book)</div><div class="line">        &#125;</div><div class="line">    &#125;)</div><div class="line">    </div><div class="line">    queue.async(group: group, execute: workItem)</div><div class="line">&#125;</div><div class="line"></div><div class="line"><span class="number">_</span> = group.wait(timeout: <span class="type">DispatchTime</span>.distantFuture)</div><div class="line"></div><div class="line"><span class="built_in">print</span>(<span class="string">"all blocks complete"</span>)</div><div class="line"></div><div class="line"><span class="type">Library</span>.shared.printReport()</div></pre></td></tr></table></figure>
+<p>下面是执行结果<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div></pre></td><td class="code"><pre><div class="line">Hello, World!</div><div class="line">start</div><div class="line">all blocks complete</div><div class="line">....Book#1....</div><div class="line">Checked out to 10 times </div><div class="line">in stock</div><div class="line">....Book#2....</div><div class="line">Checked out to 10 times </div><div class="line">in stock</div><div class="line">Program ended with exit code: 0</div></pre></td></tr></table></figure></p>
+<h1 id="对象池模式的变体"><a href="#对象池模式的变体" class="headerlink" title="对象池模式的变体"></a>对象池模式的变体</h1><h2 id="基本概念-1"><a href="#基本概念-1" class="headerlink" title="基本概念"></a>基本概念</h2><p>更改对象池的运作方式来适应不同的场景</p>
+<p>对象池实现设计四种策略：</p>
+<h4 id="对象创建策略（对象的创建方式）"><a href="#对象创建策略（对象的创建方式）" class="headerlink" title="对象创建策略（对象的创建方式）"></a>对象创建策略（对象的创建方式）</h4><blockquote>
+<p>积极性策略，即对象在使用前就已经被创建（上面示例代码中pool类的初始化方法属于该类型）</p>
+</blockquote>
+<p>缺点:</p>
+<ul>
+<li>在需求出现之前就已经花了创建和配置对象所需要的资源</li>
+<li>创建和配置的对象有可能与需求不相符即对象不可用</li>
+</ul>
+<blockquote>
+<p>惰性策略，即被动型，需要对象的时候才会被创建</p>
+</blockquote>
+<p>代码示例:</p>
+<p>在ObjectPool工程中创建BookSeller类。这里的实现方式只是给需求方提供Book的获取方法。其实现不重要<br><figure class="highlight swift"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line"><span class="class"><span class="keyword">class</span> <span class="title">BookSeller</span> </span>&#123;</div><div class="line">    <span class="class"><span class="keyword">class</span> <span class="title">func</span> <span class="title">buyBook</span>(<span class="title">author</span>:<span class="title">String</span>,<span class="title">title</span>:<span class="title">String</span>,<span class="title">stockNumber</span>:<span class="title">Int</span>) -&gt; <span class="title">Book</span></span>&#123;</div><div class="line">        <span class="keyword">return</span> <span class="type">Book</span>(author: author, title: title, stock: stockNumber)</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
+<p>修改pool类</p>
+<figure class="highlight swift"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div><div class="line">44</div><div class="line">45</div><div class="line">46</div><div class="line">47</div><div class="line">48</div></pre></td><td class="code"><pre><div class="line"><span class="class"><span class="keyword">class</span> <span class="title">Pool</span>&lt;<span class="title">T</span>&gt; </span>&#123;</div><div class="line">    <span class="keyword">private</span> <span class="keyword">var</span> data:[<span class="type">T</span>] = []</div><div class="line">    </div><div class="line">    <span class="keyword">private</span> <span class="keyword">let</span> dataProtectQueue = <span class="type">DispatchQueue</span>(label: <span class="string">"com.ra.ObjectPool.Pool.DataProtectQueue"</span>)</div><div class="line">    </div><div class="line">    <span class="keyword">private</span> <span class="keyword">let</span> semaphore:<span class="type">DispatchSemaphore</span></div><div class="line">    </div><div class="line">    <span class="keyword">private</span> <span class="keyword">var</span> itemCount:<span class="type">Int</span> = <span class="number">0</span></div><div class="line">    <span class="keyword">private</span> <span class="keyword">let</span> maxItemCount:<span class="type">Int</span></div><div class="line">    <span class="keyword">private</span> <span class="keyword">let</span> itemFactory:()-&gt;<span class="type">T</span></div><div class="line">    </div><div class="line">    <span class="keyword">init</span>(maxItemCount:<span class="type">Int</span>,factory:@escaping ()-&gt;<span class="type">T</span>) &#123;</div><div class="line">        <span class="keyword">self</span>.itemFactory = factory</div><div class="line">        <span class="keyword">self</span>.maxItemCount = maxItemCount</div><div class="line">        <span class="keyword">self</span>.semaphore = <span class="type">DispatchSemaphore</span>(value: maxItemCount)</div><div class="line">    &#125;</div><div class="line">    </div><div class="line">    <span class="function"><span class="keyword">func</span> <span class="title">getFromPool</span><span class="params">()</span></span> -&gt; <span class="type">T</span>? &#123;</div><div class="line">        </div><div class="line">        <span class="keyword">var</span> result:<span class="type">T</span>?</div><div class="line">        </div><div class="line">        <span class="keyword">if</span> semaphore.wait(timeout: <span class="type">DispatchTime</span>.distantFuture) == .success&#123;</div><div class="line">            dataProtectQueue.sync &#123;</div><div class="line">                <span class="keyword">if</span> <span class="keyword">self</span>.data.<span class="built_in">count</span> == <span class="number">0</span> &amp;&amp; <span class="keyword">self</span>.itemCount &lt; <span class="keyword">self</span>.maxItemCount&#123;</div><div class="line">                    result = <span class="keyword">self</span>.itemFactory()</div><div class="line">                    <span class="keyword">self</span>.itemCount += <span class="number">1</span></div><div class="line">                &#125;<span class="keyword">else</span>&#123;</div><div class="line">                    result = <span class="keyword">self</span>.data.removeFirst()</div><div class="line">                &#125;</div><div class="line">            &#125;</div><div class="line">        &#125;</div><div class="line">        </div><div class="line">        <span class="keyword">return</span> result</div><div class="line">    &#125;</div><div class="line">    </div><div class="line">    <span class="function"><span class="keyword">func</span> <span class="title">returnPool</span><span class="params">(item:T)</span></span> &#123;</div><div class="line">        dataProtectQueue.async &#123;</div><div class="line">            <span class="keyword">self</span>.data.append(item)</div><div class="line">            <span class="keyword">self</span>.semaphore.signal()</div><div class="line">        &#125;</div><div class="line">    &#125;</div><div class="line">    </div><div class="line">    <span class="function"><span class="keyword">func</span> <span class="title">processPoolItems</span><span class="params">(callBack:<span class="params">(<span class="params">([T])</span></span></span></span> -&gt; <span class="type">Void</span>)) &#123;</div><div class="line">        dataProtectQueue.sync &#123;</div><div class="line">            callBack(<span class="keyword">self</span>.data)</div><div class="line">        &#125;</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>修改Library类中相关初始化方法</p>
+<figure class="highlight swift"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div></pre></td><td class="code"><pre><div class="line"><span class="comment">///修改初始化方法</span></div><div class="line"><span class="keyword">private</span> <span class="keyword">init</span>(stockLevel:<span class="type">Int</span>)&#123;</div><div class="line">        </div><div class="line">        <span class="keyword">var</span> stockId = <span class="number">1</span></div><div class="line">        </div><div class="line">        stockId += <span class="number">1</span></div><div class="line">        </div><div class="line">        <span class="keyword">self</span>.pool = <span class="type">Pool</span>(maxItemCount: stockLevel, factory: &#123; () <span class="keyword">in</span></div><div class="line">            <span class="keyword">return</span> <span class="type">BookSeller</span>.buyBook(author: <span class="string">"Dickens,Charles"</span>, title: <span class="string">"Hard times"</span>, stockNumber: stockId)</div><div class="line">        &#125;)</div><div class="line">&#125;</div><div class="line"></div><div class="line"><span class="comment">///修改打印方法</span></div><div class="line"><span class="function"><span class="keyword">func</span> <span class="title">printReport</span><span class="params">()</span></span> &#123;</div><div class="line">        </div><div class="line">        pool.processPoolItems &#123; (books) <span class="keyword">in</span></div><div class="line">            books.forEach &#123; (book) <span class="keyword">in</span></div><div class="line">                <span class="built_in">print</span>(<span class="string">"....Book#<span class="subst">\(book.stockNumber)</span>...."</span>)</div><div class="line">                <span class="built_in">print</span>(<span class="string">"Checked out to <span class="subst">\(book.checkoutCount)</span> times "</span>)</div><div class="line">                <span class="keyword">if</span> <span class="keyword">let</span> reader = book.reader&#123;</div><div class="line">                    <span class="built_in">print</span>(<span class="string">"Checked out to <span class="subst">\(reader)</span>"</span>)</div><div class="line">                &#125;<span class="keyword">else</span>&#123;</div><div class="line">                    <span class="built_in">print</span>(<span class="string">"in stock"</span>)</div><div class="line">                &#125;</div><div class="line">            &#125;</div><div class="line">        &#125;</div><div class="line">        </div><div class="line">    &#125;</div></pre></td></tr></table></figure>
+<h4 id="对象复用策略"><a href="#对象复用策略" class="headerlink" title="对象复用策略"></a>对象复用策略</h4><p>对象池模式的本质决定了它所管理的对象会被重复分配给调用组件，这意味着返还的对象会处于非常正常状态的风险</p>
+<ul>
+<li>相信策略(默认所有返回对象都是可服用的)</li>
+<li>不信任策略(对象返回给对象池之前进行检查。不可用就抛弃)</li>
+</ul>
+<p>代码修改：<br>创建PoolItem.Swift文件。并创建协议</p>
+<figure class="highlight swift"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line"><span class="class"><span class="keyword">protocol</span> <span class="title">PoolItem</span> </span>&#123;</div><div class="line">    <span class="keyword">var</span> canReuse:<span class="type">Bool</span>&#123; <span class="keyword">get</span> &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>修改Pool类以及returnToPool方法</p>
+<figure class="highlight swift"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div></pre></td><td class="code"><pre><div class="line"><span class="class"><span class="keyword">class</span> <span class="title">Pool</span>&lt;<span class="title">T</span>&gt; <span class="title">where</span> <span class="title">T</span>:<span class="title">AnyObject</span> </span>&#123;</div><div class="line">    .....</div><div class="line">    <span class="function"><span class="keyword">func</span> <span class="title">returnPool</span><span class="params">(item:T)</span></span> &#123;</div><div class="line">        dataProtectQueue.async &#123;</div><div class="line">            <span class="comment">///对归还对象进行检查</span></div><div class="line">            <span class="keyword">if</span> <span class="keyword">let</span> pitem = item <span class="keyword">as</span>? <span class="type">PoolItem</span> &#123;</div><div class="line">                <span class="keyword">if</span> pitem.canReuse &#123;</div><div class="line">                    <span class="keyword">self</span>.data.append(item)</div><div class="line">                    <span class="keyword">self</span>.semaphore.signal()</div><div class="line">                &#125;</div><div class="line">            &#125;</div><div class="line">           </div><div class="line">        &#125;</div><div class="line">    &#125;</div><div class="line">    .....</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>Book类遵守并实现协议</p>
+<figure class="highlight swift"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div></pre></td><td class="code"><pre><div class="line"><span class="class"><span class="keyword">class</span> <span class="title">Book</span> : <span class="title">PoolItem</span></span>&#123;</div><div class="line">    <span class="keyword">let</span> author:<span class="type">String</span></div><div class="line">    <span class="keyword">let</span> title:<span class="type">String</span></div><div class="line">    <span class="keyword">let</span> stockNumber:<span class="type">Int</span></div><div class="line">    <span class="keyword">var</span> reader:<span class="type">String</span>?</div><div class="line">    <span class="keyword">var</span> checkoutCount = <span class="number">0</span></div><div class="line">    </div><div class="line">    <span class="keyword">var</span> canReuse: <span class="type">Bool</span>&#123;</div><div class="line">        <span class="keyword">get</span>&#123;</div><div class="line">            <span class="keyword">let</span> reusable = checkoutCount &lt; <span class="number">5</span></div><div class="line">            <span class="keyword">if</span> !reusable &#123;</div><div class="line">                <span class="built_in">print</span>(<span class="string">"Eject : Book#<span class="subst">\(<span class="keyword">self</span>.stockNumber)</span>"</span>)</div><div class="line">            &#125;</div><div class="line">            <span class="keyword">return</span> reusable</div><div class="line">        &#125;</div><div class="line">    &#125;</div><div class="line">    </div><div class="line">    <span class="keyword">init</span>(author:<span class="type">String</span>,title:<span class="type">String</span>,stock:<span class="type">Int</span>) &#123;</div><div class="line">        <span class="keyword">self</span>.author = author</div><div class="line">        <span class="keyword">self</span>.title = title</div><div class="line">        <span class="keyword">self</span>.stockNumber = stock</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<h4 id="空池策略"><a href="#空池策略" class="headerlink" title="空池策略"></a>空池策略</h4><p>对象池中没有对象可满足新的请求时，阻塞请求线程，强制让发起对象请求的线程等待，值到有可用对象后再继续执行</p>
+<p>修改main.swift</p>
+<figure class="highlight swift"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div></pre></td><td class="code"><pre><div class="line"></div><div class="line"><span class="comment">// 修改为 35次。对象池最多只能返回5个对象。此处修改只为了配合测空池策略</span></div><div class="line"><span class="keyword">for</span> i <span class="keyword">in</span> <span class="number">0</span>..&lt;<span class="number">35</span>&#123;</div><div class="line"></div><div class="line">    <span class="keyword">let</span> workItem = <span class="type">DispatchWorkItem</span>(block: &#123;</div><div class="line">        <span class="keyword">if</span> <span class="keyword">let</span> book = <span class="type">Library</span>.shared.checkoutBook(reader: <span class="string">"reader#<span class="subst">\(i)</span>"</span>)&#123;</div><div class="line">            <span class="type">Thread</span>.sleep(forTimeInterval: <span class="type">TimeInterval</span>(arc4random() % <span class="number">2</span>))</div><div class="line">            <span class="type">Library</span>.shared.returnBook(book)</div><div class="line">        &#125;</div><div class="line">    &#125;)</div><div class="line">    </div><div class="line">    queue.async(group: group, execute: workItem)</div><div class="line">&#125;</div><div class="line">....</div><div class="line">queue.sync &#123;</div><div class="line">    <span class="built_in">print</span>(<span class="string">"all blocks complete"</span>)</div><div class="line">    </div><div class="line">    <span class="type">Library</span>.shared.printReport()</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>修改pool类</p>
+<figure class="highlight swift"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div></pre></td><td class="code"><pre><div class="line">...</div><div class="line">    <span class="function"><span class="keyword">func</span> <span class="title">getFromPool</span><span class="params">(maxWaitSecond:Int = <span class="number">5</span>)</span></span> -&gt; <span class="type">T</span>? &#123;</div><div class="line">        </div><div class="line">        <span class="keyword">var</span> result:<span class="type">T</span>?</div><div class="line">        </div><div class="line">        <span class="keyword">let</span> waitTime = (maxWaitSecond == -<span class="number">1</span>) ? <span class="type">DispatchTime</span>.distantFuture : <span class="type">DispatchTime</span>(uptimeNanoseconds: <span class="type">UInt64</span>(maxWaitSecond*<span class="type">Int</span>(<span class="type">NSEC_PER_SEC</span>)))</div><div class="line">        </div><div class="line">        </div><div class="line">        <span class="keyword">if</span> semaphore.wait(timeout: waitTime) == .success&#123;</div><div class="line">            dataProtectQueue.sync &#123;</div><div class="line">                <span class="keyword">if</span> <span class="keyword">self</span>.data.<span class="built_in">count</span> == <span class="number">0</span> &amp;&amp; <span class="keyword">self</span>.itemCount &lt; <span class="keyword">self</span>.maxItemCount&#123;</div><div class="line">                    result = <span class="keyword">self</span>.itemFactory()</div><div class="line">                    <span class="keyword">self</span>.itemCount += <span class="number">1</span></div><div class="line">                &#125;<span class="keyword">else</span>&#123;</div><div class="line">                    result = <span class="keyword">self</span>.data.removeFirst()</div><div class="line">                &#125;</div><div class="line">            &#125;</div><div class="line">        &#125;</div><div class="line">        </div><div class="line">        <span class="keyword">return</span> result</div><div class="line">    &#125;</div><div class="line">...</div></pre></td></tr></table></figure>
+<ul>
+<li>弹性对象</li>
+</ul>
+<p>此处修改见 demo ObjectPool(弹性对象)</p>
+<h4 id="对象分配策略"><a href="#对象分配策略" class="headerlink" title="对象分配策略"></a>对象分配策略</h4><ul>
+<li>先进先出</li>
+<li>优先分配使用最少的</li>
+</ul>
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/Swift/" rel="tag"># Swift</a>
+          
+            <a href="/tags/DesignPattern/" rel="tag"># DesignPattern</a>
+          
+        </div>
+      
+
+      
+        
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2017/12/20/Server-Side-Vapor环境初始化/" rel="next" title="Swift服务器开发Vapor安装">
+                <i class="fa fa-chevron-left"></i> Swift服务器开发Vapor安装
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2017/12/24/设计模式-工厂模式/" rel="prev" title="设计模式学习-工厂模式">
+                设计模式学习-工厂模式 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+  <div class="comments" id="comments">
+    
+      <div id="disqus_thread">
+        <noscript>
+          Please enable JavaScript to view the
+          <a href="//disqus.com/?ref_noscript">comments powered by Disqus.</a>
+        </noscript>
+      </div>
+    
+  </div>
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap" >
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+          <img class="site-author-image" itemprop="image"
+               src="/uploads/avatar.jpg"
+               alt="敖老黑" />
+          <p class="site-author-name" itemprop="name">敖老黑</p>
+           
+              <p class="site-description motion-element" itemprop="description">技术分享</p>
+          
+        </div>
+        <nav class="site-state motion-element">
+
+          
+            <div class="site-state-item site-state-posts">
+              <a href="/archives">
+                <span class="site-state-item-count">12</span>
+                <span class="site-state-item-name">日志</span>
+              </a>
+            </div>
+          
+
+          
+            
+            
+            <div class="site-state-item site-state-categories">
+              <a href="/categories/index.html">
+                <span class="site-state-item-count">3</span>
+                <span class="site-state-item-name">分类</span>
+              </a>
+            </div>
+          
+
+          
+            
+            
+            <div class="site-state-item site-state-tags">
+              <a href="/tags/index.html">
+                <span class="site-state-item-count">6</span>
+                <span class="site-state-item-name">标签</span>
+              </a>
+            </div>
+          
+
+        </nav>
+
+        
+
+        <div class="links-of-author motion-element">
+          
+            
+              <span class="links-of-author-item">
+                <a href="https://github.com/RockyAo" target="_blank" title="GitHub">
+                  
+                    <i class="fa fa-fw fa-github"></i>
+                  
+                  GitHub
+                </a>
+              </span>
+            
+              <span class="links-of-author-item">
+                <a href="https://twitter.com/CGSizeMake" target="_blank" title="Twitter">
+                  
+                    <i class="fa fa-fw fa-twitter"></i>
+                  
+                  Twitter
+                </a>
+              </span>
+            
+              <span class="links-of-author-item">
+                <a href="http://weibo.com/5357889389/profile?rightmod=1&wvr=6&mod=personinfo" target="_blank" title="Weibo">
+                  
+                    <i class="fa fa-fw fa-weibo"></i>
+                  
+                  Weibo
+                </a>
+              </span>
+            
+          
+        </div>
+
+        
+        
+
+        
+        
+
+        
+
+
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#对象池模式"><span class="nav-number">1.</span> <span class="nav-text">对象池模式</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#基本概念"><span class="nav-number">1.1.</span> <span class="nav-text">基本概念</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#对象池模式的变体"><span class="nav-number">2.</span> <span class="nav-text">对象池模式的变体</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#基本概念-1"><span class="nav-number">2.1.</span> <span class="nav-text">基本概念</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#对象创建策略（对象的创建方式）"><span class="nav-number">2.1.0.1.</span> <span class="nav-text">对象创建策略（对象的创建方式）</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#对象复用策略"><span class="nav-number">2.1.0.2.</span> <span class="nav-text">对象复用策略</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#空池策略"><span class="nav-number">2.1.0.3.</span> <span class="nav-text">空池策略</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#对象分配策略"><span class="nav-number">2.1.0.4.</span> <span class="nav-text">对象分配策略</span></a></li></ol></li></ol></li></ol></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright" >
+  
+  &copy; 
+  <span itemprop="copyrightYear">2018</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">敖老黑</span>
+</div>
+
+
+<div class="powered-by">
+  由 <a class="theme-link" href="https://hexo.io">Hexo</a> 强力驱动
+</div>
+
+<div class="theme-info">
+  主题 -
+  <a class="theme-link" href="https://github.com/iissnan/hexo-theme-next">
+    NexT.Mist
+  </a>
+</div>
+
+
+        
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+  
+  <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+
+  
+  <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+
+  
+  <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.0"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.0"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.0"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.0"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.0"></script>
+
+
+
+  
+
+
+
+  
+
+    <script type="text/javascript">
+      var disqus_shortname = 'helloc';
+      var disqus_identifier = '2017/12/22/设计模式-对象池模式/';
+
+      var disqus_title = "设计模式学习-对象池模式";
+
+
+      function run_disqus_script(disqus_script) {
+        var dsq = document.createElement('script');
+        dsq.type = 'text/javascript';
+        dsq.async = true;
+        dsq.src = '//' + disqus_shortname + '.disqus.com/' + disqus_script;
+        (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+      }
+
+      run_disqus_script('count.js');
+
+      
+        var disqus_config = function () {
+            this.page.url = disqus_url;
+            this.page.identifier = disqus_identifier;
+            this.page.title = disqus_title;
+        };
+        run_disqus_script('embed.js');
+      
+
+    </script>
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+  <script src="https://cdn1.lncld.net/static/js/av-core-mini-0.6.1.js"></script>
+  <script>AV.initialize("iotCMn6bsX6mradrIyTWMyXI-gzGzoHsz", "f5bwNMQ04gmiEsX1uVPGkoGf");</script>
+  <script>
+    function showTime(Counter) {
+      var query = new AV.Query(Counter);
+      var entries = [];
+      var $visitors = $(".leancloud_visitors");
+
+      $visitors.each(function () {
+        entries.push( $(this).attr("id").trim() );
+      });
+
+      query.containedIn('url', entries);
+      query.find()
+        .done(function (results) {
+          var COUNT_CONTAINER_REF = '.leancloud-visitors-count';
+
+          if (results.length === 0) {
+            $visitors.find(COUNT_CONTAINER_REF).text(0);
+            return;
+          }
+
+          for (var i = 0; i < results.length; i++) {
+            var item = results[i];
+            var url = item.get('url');
+            var time = item.get('time');
+            var element = document.getElementById(url);
+
+            $(element).find(COUNT_CONTAINER_REF).text(time);
+          }
+          for(var i = 0; i < entries.length; i++) {
+            var url = entries[i];
+            var element = document.getElementById(url);
+            var countSpan = $(element).find(COUNT_CONTAINER_REF);
+            if( countSpan.text() == '') {
+              countSpan.text(0);
+            }
+          }
+        })
+        .fail(function (object, error) {
+          console.log("Error: " + error.code + " " + error.message);
+        });
+    }
+
+    function addCount(Counter) {
+      var $visitors = $(".leancloud_visitors");
+      var url = $visitors.attr('id').trim();
+      var title = $visitors.attr('data-flag-title').trim();
+      var query = new AV.Query(Counter);
+
+      query.equalTo("url", url);
+      query.find({
+        success: function(results) {
+          if (results.length > 0) {
+            var counter = results[0];
+            counter.fetchWhenSave(true);
+            counter.increment("time");
+            counter.save(null, {
+              success: function(counter) {
+                var $element = $(document.getElementById(url));
+                $element.find('.leancloud-visitors-count').text(counter.get('time'));
+              },
+              error: function(counter, error) {
+                console.log('Failed to save Visitor num, with error message: ' + error.message);
+              }
+            });
+          } else {
+            var newcounter = new Counter();
+            /* Set ACL */
+            var acl = new AV.ACL();
+            acl.setPublicReadAccess(true);
+            acl.setPublicWriteAccess(true);
+            newcounter.setACL(acl);
+            /* End Set ACL */
+            newcounter.set("title", title);
+            newcounter.set("url", url);
+            newcounter.set("time", 1);
+            newcounter.save(null, {
+              success: function(newcounter) {
+                var $element = $(document.getElementById(url));
+                $element.find('.leancloud-visitors-count').text(newcounter.get('time'));
+              },
+              error: function(newcounter, error) {
+                console.log('Failed to create');
+              }
+            });
+          }
+        },
+        error: function(error) {
+          console.log('Error:' + error.code + " " + error.message);
+        }
+      });
+    }
+
+    $(function() {
+      var Counter = AV.Object.extend("Counter");
+      if ($('.leancloud_visitors').length == 1) {
+        addCount(Counter);
+      } else if ($('.post-title-link').length > 1) {
+        showTime(Counter);
+      }
+    });
+  </script>
+
+
+
+  
+
+  
+
+  
+
+</body>
+</html>
