@@ -71,7 +71,7 @@
 <link href="/css/main.css?v=5.1.0" rel="stylesheet" type="text/css" />
 
 
-  <meta name="keywords" content="JavaScript," />
+  <meta name="keywords" content="webpack," />
 
 
 
@@ -87,22 +87,22 @@
 
 
 
-<meta name="description" content="ECMAScript和JavaScript的关系ECMAScript6是JavaScript语言的下一代标准，2015年6月正式发布。Mozilla公司将在这个标准的基础上，推出JavaScript2.0
-ECMAScript是JavaScript语言的国际标准，而JavaScript是ECMAScript的实现
-浏览器兼容https://github.com/paulmillr/es6-shim">
+<meta name="description" content="webpack 特点与优势webpack与RequireJS 、browserify
+RequireJS是一个JavaScript模块加载器，基于AMD规范实现。他同事也提供了对模块进行打包与构建的工具r.js ，通过将开发时单独的匿名模块具名化并进行合并，实现线上页面资源加载的性能优化
+browserify是一个以在浏览器中使用Node.js模块为出发点的工具，特点：①对CommonJS规范(N">
 <meta property="og:type" content="article">
-<meta property="og:title" content="ECMAScript6简介">
-<meta property="og:url" content="http://share.ra.com/2016/09/08/ECMAScript6简介/index.html">
+<meta property="og:title" content="webpack">
+<meta property="og:url" content="http://share.ra.com/2016/11/22/webpack/index.html">
 <meta property="og:site_name" content="如果全世界都说C语言">
-<meta property="og:description" content="ECMAScript和JavaScript的关系ECMAScript6是JavaScript语言的下一代标准，2015年6月正式发布。Mozilla公司将在这个标准的基础上，推出JavaScript2.0
-ECMAScript是JavaScript语言的国际标准，而JavaScript是ECMAScript的实现
-浏览器兼容https://github.com/paulmillr/es6-shim">
-<meta property="og:updated_time" content="2017-03-22T02:16:37.000Z">
+<meta property="og:description" content="webpack 特点与优势webpack与RequireJS 、browserify
+RequireJS是一个JavaScript模块加载器，基于AMD规范实现。他同事也提供了对模块进行打包与构建的工具r.js ，通过将开发时单独的匿名模块具名化并进行合并，实现线上页面资源加载的性能优化
+browserify是一个以在浏览器中使用Node.js模块为出发点的工具，特点：①对CommonJS规范(N">
+<meta property="og:updated_time" content="2018-02-24T14:48:37.553Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="ECMAScript6简介">
-<meta name="twitter:description" content="ECMAScript和JavaScript的关系ECMAScript6是JavaScript语言的下一代标准，2015年6月正式发布。Mozilla公司将在这个标准的基础上，推出JavaScript2.0
-ECMAScript是JavaScript语言的国际标准，而JavaScript是ECMAScript的实现
-浏览器兼容https://github.com/paulmillr/es6-shim">
+<meta name="twitter:title" content="webpack">
+<meta name="twitter:description" content="webpack 特点与优势webpack与RequireJS 、browserify
+RequireJS是一个JavaScript模块加载器，基于AMD规范实现。他同事也提供了对模块进行打包与构建的工具r.js ，通过将开发时单独的匿名模块具名化并进行合并，实现线上页面资源加载的性能优化
+browserify是一个以在浏览器中使用Node.js模块为出发点的工具，特点：①对CommonJS规范(N">
 
 
 
@@ -130,13 +130,13 @@ ECMAScript是JavaScript语言的国际标准，而JavaScript是ECMAScript的实�
 
 
 
-  <link rel="canonical" href="http://share.ra.com/2016/09/08/ECMAScript6简介/"/>
+  <link rel="canonical" href="http://share.ra.com/2016/11/22/webpack/"/>
 
 
 
 
 
-  <title> ECMAScript6简介 | 如果全世界都说C语言 </title>
+  <title> webpack | 如果全世界都说C语言 </title>
 </head>
 
 <body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
@@ -275,7 +275,7 @@ ECMAScript是JavaScript语言的国际标准，而JavaScript是ECMAScript的实�
   
 
   <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
-    <link itemprop="mainEntityOfPage" href="http://share.ra.com/2016/09/08/ECMAScript6简介/">
+    <link itemprop="mainEntityOfPage" href="http://share.ra.com/2016/11/22/webpack/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="name" content="敖老黑">
@@ -296,7 +296,7 @@ ECMAScript是JavaScript语言的国际标准，而JavaScript是ECMAScript的实�
             
             
               
-                ECMAScript6简介
+                webpack
               
             
           </h1>
@@ -311,8 +311,8 @@ ECMAScript是JavaScript语言的国际标准，而JavaScript是ECMAScript的实�
               
                 <span class="post-meta-item-text">发表于</span>
               
-              <time title="创建于" itemprop="dateCreated datePublished" datetime="2016-09-08T17:17:00+08:00">
-                2016-09-08
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2016-11-22T23:30:37+08:00">
+                2016-11-22
               </time>
             
 
@@ -334,8 +334,8 @@ ECMAScript是JavaScript语言的国际标准，而JavaScript是ECMAScript的实�
               
               
                 <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/web/" itemprop="url" rel="index">
-                    <span itemprop="name">web</span>
+                  <a href="/categories/Web/" itemprop="url" rel="index">
+                    <span itemprop="name">Web</span>
                   </a>
                 </span>
 
@@ -352,8 +352,8 @@ ECMAScript是JavaScript语言的国际标准，而JavaScript是ECMAScript的实�
                 <span class="post-meta-item-icon">
                   <i class="fa fa-comment-o"></i>
                 </span>
-                <a href="/2016/09/08/ECMAScript6简介/#comments" itemprop="discussionUrl">
-                  <span class="post-comments-count disqus-comment-count" data-disqus-identifier="2016/09/08/ECMAScript6简介/" itemprop="commentCount"></span>
+                <a href="/2016/11/22/webpack/#comments" itemprop="discussionUrl">
+                  <span class="post-comments-count disqus-comment-count" data-disqus-identifier="2016/11/22/webpack/" itemprop="commentCount"></span>
                 </a>
               </span>
             
@@ -361,7 +361,7 @@ ECMAScript是JavaScript语言的国际标准，而JavaScript是ECMAScript的实�
 
           
           
-             <span id="/2016/09/08/ECMAScript6简介/" class="leancloud_visitors" data-flag-title="ECMAScript6简介">
+             <span id="/2016/11/22/webpack/" class="leancloud_visitors" data-flag-title="webpack">
                <span class="post-meta-divider">|</span>
                <span class="post-meta-item-icon">
                  <i class="fa fa-eye"></i>
@@ -390,18 +390,60 @@ ECMAScript是JavaScript语言的国际标准，而JavaScript是ECMAScript的实�
       
 
       
-        <h4 id="ECMAScript和JavaScript的关系"><a href="#ECMAScript和JavaScript的关系" class="headerlink" title="ECMAScript和JavaScript的关系"></a>ECMAScript和JavaScript的关系</h4><p>ECMAScript6是JavaScript语言的下一代标准，2015年6月正式发布。Mozilla公司将在这个标准的基础上，推出JavaScript2.0</p>
-<p>ECMAScript是JavaScript语言的国际标准，而JavaScript是ECMAScript的实现</p>
-<h4 id="浏览器兼容"><a href="#浏览器兼容" class="headerlink" title="浏览器兼容"></a>浏览器兼容</h4><p><a href="https://github.com/paulmillr/es6-shim" target="_blank" rel="external">https://github.com/paulmillr/es6-shim</a></p>
-<h1 id="let命令"><a href="#let命令" class="headerlink" title="let命令"></a>let命令</h1><h3 id="基本用法"><a href="#基本用法" class="headerlink" title="基本用法"></a>基本用法</h3><p>ES6新增了let命令，用来声明变量。用法类似于var，但所生命的变量，只在let命令所在的代码块内有效</p>
-<h3 id="不存在变量提升"><a href="#不存在变量提升" class="headerlink" title="不存在变量提升"></a>不存在变量提升</h3><p>let不像var那样会存在变量提升</p>
-<h3 id="暂时性死区"><a href="#暂时性死区" class="headerlink" title="暂时性死区"></a>暂时性死区</h3><p>只要块级作用域内存在let命令，它所生命的变量就’绑定’（binding）这个区域，不在受外部影响</p>
-<h3 id="不允许重复声明"><a href="#不允许重复声明" class="headerlink" title="不允许重复声明"></a>不允许重复声明</h3><p>let不允许在相同作用域内，重复声明同一个变量</p>
-<h1 id="const命令"><a href="#const命令" class="headerlink" title="const命令"></a>const命令</h1><p>const也用来声明常量，一旦声明常量的值不可改变。</p>
-<h1 id="跨模块常量"><a href="#跨模块常量" class="headerlink" title="跨模块常量"></a>跨模块常量</h1><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div></pre></td><td class="code"><pre><div class="line">//module.js</div><div class="line">export const variantName = &apos;Lily&apos;;</div><div class="line">export const floatcount = 3.1.4</div><div class="line">//use.js</div><div class="line">	 </div><div class="line">//导入全部</div><div class="line">import * as var variant from &apos;./module&apos;;</div><div class="line">console.log(variant.variantName);</div><div class="line">	 </div><div class="line">//导入某一个</div><div class="line">import variantName as variant from &apos;./module&apos;;</div><div class="line">	 </div><div class="line">//导入某几个</div><div class="line">import &#123; variantName , floatcount&#125; as variant from &apos;./module&apos;</div></pre></td></tr></table></figure>
-<h1 id="全局对象属性"><a href="#全局对象属性" class="headerlink" title="全局对象属性"></a>全局对象属性</h1><p>全局对象是最顶层的对象，在浏览器环境指的是window对象，在Node.js指的是global对象。在JavaScript语言中，所有全局变量都是全局对象的属性。（Node的情况比较特，这一条只对REPL环境适用，模块环境必须显式生命global属性）</p>
-<p>ES6规定，var命令和function命令声明的全局变量，属于全局对象的属性；let命令、const命令、class命令声明的全局变量，不属于全局对象的属性</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div></pre></td><td class="code"><pre><div class="line">var name = &apos;test&apos;;</div><div class="line">//浏览器环境下</div><div class="line">console.log(window.name); //输出 name</div><div class="line">	</div><div class="line">//node.js环境下</div><div class="line">console.log(global.name); //输出 name</div><div class="line">	</div><div class="line">//通用环境下</div><div class="line">console.log(this.name); //输出 name</div></pre></td></tr></table></figure>
+        <h2 id="webpack-特点与优势"><a href="#webpack-特点与优势" class="headerlink" title="webpack 特点与优势"></a>webpack 特点与优势</h2><h3 id="webpack与RequireJS-、browserify"><a href="#webpack与RequireJS-、browserify" class="headerlink" title="webpack与RequireJS 、browserify"></a>webpack与RequireJS 、browserify</h3><ul>
+<li>RequireJS是一个JavaScript模块加载器，基于AMD规范实现。他同事也提供了对模块进行打包与构建的工具r.js ，通过将开发时单独的匿名模块具名化并进行合并，实现线上页面资源加载的性能优化</li>
+<li><p>browserify是一个以在浏览器中使用Node.js模块为出发点的工具，特点：<br>①对CommonJS规范(Node.js模块所采用的规范)的模块代码进行的转换与包装 ②对很多Node.js的标准package进行了浏览器端的适配，只要遵循CommonJS规范的JavaScript模块，即使是纯前端代码，也可以使用它进行打包</p>
+</li>
+<li><p>webpack则是一个为前端模块打包构建而生的工具。它既洗去了大量已有方案的优点和教训，也解决了很多前端开发过程中已存在的痛点，如代码的拆分与异步加载、对非JavaScript自愿的支持等。强大的loader设计使得它更像一个构建平台，而不只是一个打包工具</p>
+</li>
+</ul>
+<h2 id="webpack特色"><a href="#webpack特色" class="headerlink" title="webpack特色"></a>webpack特色</h2><ul>
+<li>代码拆分</li>
+<li>只能静态分析</li>
+<li>模块热替换</li>
+</ul>
+<h2 id="安装"><a href="#安装" class="headerlink" title="安装"></a>安装</h2><ul>
+<li><p>通用安装</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">npm install webpack -g</div></pre></td></tr></table></figure>
+</li>
+<li><p>指定版本安装</p>
+</li>
+</ul>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">npm install webpack@<span class="number">1.1</span><span class="number">.14</span> -g</div></pre></td></tr></table></figure>
+<ul>
+<li>安装到项目<figure class="highlight js"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">npm install webpack --save-dev</div></pre></td></tr></table></figure>
+</li>
+</ul>
+<h2 id="配置文件"><a href="#配置文件" class="headerlink" title="配置文件"></a>配置文件</h2><ul>
+<li>每次构建都需要指定项目的入口文件（./index.js）与构建输出文件(bundle.js)</li>
+<li>使用loader需要以xxx!的形式指定，意味着每个有requireCSS资源的地方都需要写如下形式</li>
+</ul>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"><span class="built_in">require</span>(<span class="string">'style!css!./index.css'</span>);</div></pre></td></tr></table></figure>
+<h4 id="webpack配置文件"><a href="#webpack配置文件" class="headerlink" title="webpack配置文件"></a>webpack配置文件</h4><p>默认使用当前目录下的webpack.config.js，配置文件只需要export的一个配置信息对象ji’ke即可<br><figure class="highlight js"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line"><span class="built_in">module</span>.exports = &#123;</div><div class="line">  <span class="comment">//configuration  </span></div><div class="line">&#125;;</div></pre></td></tr></table></figure></p>
+<h5 id="一个最简单的配置项包含以下信息"><a href="#一个最简单的配置项包含以下信息" class="headerlink" title="一个最简单的配置项包含以下信息"></a>一个最简单的配置项包含以下信息</h5><ul>
+<li>entry项目的入口文件</li>
+<li>output构建的输出结果描述。（本身是一个对象，包括很多字段，比较重要的如下）</li>
+</ul>
+<blockquote>
+<ul>
+<li>path:输出目录。</li>
+<li>filename:输出文件名 </li>
+<li>publicPath:输出目录所对应的外部路径（从浏览器中访问）</li>
+</ul>
+</blockquote>
+<p>其中publicPath是一个很容易被忽略但是很重要的配置，它表示构建结果最终被真正访问时的路径。</p>
+<h5 id="常见前端构建上线过程是这样的：配置构建输出目录为dist-构建完成后对dist目录进行打包，然后将其内容（结果文件往往会不止一个）发布到CDN上"><a href="#常见前端构建上线过程是这样的：配置构建输出目录为dist-构建完成后对dist目录进行打包，然后将其内容（结果文件往往会不止一个）发布到CDN上" class="headerlink" title="常见前端构建上线过程是这样的：配置构建输出目录为dist,构建完成后对dist目录进行打包，然后将其内容（结果文件往往会不止一个）发布到CDN上"></a>常见前端构建上线过程是这样的：配置构建输出目录为dist,构建完成后对dist目录进行打包，然后将其内容（结果文件往往会不止一个）发布到CDN上</h5><figure class="highlight js"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div></pre></td><td class="code"><pre><div class="line"><span class="comment">//webpack配置ex</span></div><div class="line"><span class="keyword">var</span> path = <span class="built_in">require</span>(<span class="string">'path'</span>);</div><div class="line"><span class="built_in">module</span>.exports = &#123;</div><div class="line">    <span class="attr">entry</span>:path.join(__dirname,<span class="string">'index'</span>),</div><div class="line">    <span class="attr">output</span>:&#123;</div><div class="line">        <span class="attr">path</span>:__dirname,</div><div class="line">        <span class="attr">filename</span>:<span class="string">'bundle.js'</span></div><div class="line">    &#125;,</div><div class="line">    <span class="attr">module</span>:&#123;</div><div class="line">        <span class="attr">loaders</span>:[</div><div class="line">            &#123;</div><div class="line">                <span class="attr">test</span>:<span class="regexp">/\.css$/</span>,</div><div class="line">                <span class="attr">loaders</span>:[<span class="string">'style'</span>,<span class="string">'css'</span>]</div><div class="line">            &#125;</div><div class="line">        ]</div><div class="line">    &#125;</div><div class="line">&#125;;</div></pre></td></tr></table></figure>
+<h2 id="安装插件"><a href="#安装插件" class="headerlink" title="安装插件"></a>安装插件</h2><p>webpack会内置一部分plugin，想要使用这些plugin，不需要额外安装直接使用<br><figure class="highlight js"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">var</span> webpack = <span class="built_in">require</span>(<span class="string">'webpack'</span>);</div><div class="line">webpack.BannerPlugin;<span class="comment">//这样可以直接获取BannerPlugin</span></div></pre></td></tr></table></figure></p>
+<p>安装非内置插件 ex:<br><figure class="highlight js"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">npm i html-webpack-plugin@<span class="number">1.7</span><span class="number">.0</span> --save-dev;</div></pre></td></tr></table></figure></p>
+<p>安装完成后，在webpack.config.js中就可以获取这个插件<br><figure class="highlight js"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">var</span> HtmlWebpackPlugin = <span class="built_in">require</span>(<span class="string">'html-webpack-plugin'</span>);</div></pre></td></tr></table></figure></p>
+<h2 id="实施构建"><a href="#实施构建" class="headerlink" title="实施构建"></a>实施构建</h2><p>通过添加–watch选项可开启监视功能，webpack会首先进行一次构建，然后依据构建得到的依赖关系，对项目依赖的所有文件进行监听，一旦发生改变则出发重新构建</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">webpack -w</div></pre></td></tr></table></figure>
+<p>webpack还提供了webpack-dev-server来辅助开发与调试<br>webpack-dev-server是一个机遇EXpress框架的Node.js服务器，它还提供了一个客户端的运行环境，会被注入到页面代码中执行，并通过Socket.IO 与服务器通信，这样服务器端的每次改动与重新构建都会被通知到页面上，页面可以随之做出反应</p>
+<p>webpack-dev-server需要额外安装webpack-dev-server包<br><figure class="highlight js"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">npm install webpack-dev-server -g</div></pre></td></tr></table></figure></p>
+<p>然后启动webpack-dev-server即可<br><figure class="highlight js"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">webpack-dev-server</div></pre></td></tr></table></figure></p>
+<p>服务默认监听8080端口。</p>
+<p>webpack-dev-server的配置，既可以通过命令行参数形式传递，也可以通过在webpack.config.js的export中添加devServer实现。</p>
+
       
     </div>
 
@@ -430,7 +472,7 @@ ECMAScript是JavaScript语言的国际标准，而JavaScript是ECMAScript的实�
       
         <div class="post-tags">
           
-            <a href="/tags/JavaScript/" rel="tag"># JavaScript</a>
+            <a href="/tags/webpack/" rel="tag"># webpack</a>
           
         </div>
       
@@ -443,14 +485,18 @@ ECMAScript是JavaScript语言的国际标准，而JavaScript是ECMAScript的实�
         <div class="post-nav">
           <div class="post-nav-next post-nav-item">
             
+              <a href="/2016/11/20/web开发工具/" rel="next" title="web开发工具">
+                <i class="fa fa-chevron-left"></i> web开发工具
+              </a>
+            
           </div>
 
           <span class="post-nav-divider"></span>
 
           <div class="post-nav-prev post-nav-item">
             
-              <a href="/2016/09/08/ECMAScript6变量的解构赋值/" rel="prev" title="ECMAScript6变量的解构赋值">
-                ECMAScript6变量的解构赋值 <i class="fa fa-chevron-right"></i>
+              <a href="/2017/02/22/iOS开发-自定义相机入门/" rel="prev" title="iOS开发-自定义相机入门">
+                iOS开发-自定义相机入门 <i class="fa fa-chevron-right"></i>
               </a>
             
           </div>
@@ -616,7 +662,7 @@ ECMAScript是JavaScript语言的国际标准，而JavaScript是ECMAScript的实�
             
 
             
-              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-4"><a class="nav-link" href="#ECMAScript和JavaScript的关系"><span class="nav-number">1.</span> <span class="nav-text">ECMAScript和JavaScript的关系</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#浏览器兼容"><span class="nav-number">2.</span> <span class="nav-text">浏览器兼容</span></a></li></ol></li></ol></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#let命令"><span class="nav-number"></span> <span class="nav-text">let命令</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#基本用法"><span class="nav-number"></span> <span class="nav-text">基本用法</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#不存在变量提升"><span class="nav-number"></span> <span class="nav-text">不存在变量提升</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#暂时性死区"><span class="nav-number"></span> <span class="nav-text">暂时性死区</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#不允许重复声明"><span class="nav-number"></span> <span class="nav-text">不允许重复声明</span></a></li></ol></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#const命令"><span class="nav-number"></span> <span class="nav-text">const命令</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#跨模块常量"><span class="nav-number"></span> <span class="nav-text">跨模块常量</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#全局对象属性"><span class="nav-number"></span> <span class="nav-text">全局对象属性</span></a></div>
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#webpack-特点与优势"><span class="nav-number">1.</span> <span class="nav-text">webpack 特点与优势</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#webpack与RequireJS-、browserify"><span class="nav-number">1.1.</span> <span class="nav-text">webpack与RequireJS 、browserify</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#webpack特色"><span class="nav-number">2.</span> <span class="nav-text">webpack特色</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#安装"><span class="nav-number">3.</span> <span class="nav-text">安装</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#配置文件"><span class="nav-number">4.</span> <span class="nav-text">配置文件</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#webpack配置文件"><span class="nav-number">4.0.1.</span> <span class="nav-text">webpack配置文件</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#一个最简单的配置项包含以下信息"><span class="nav-number">4.0.1.1.</span> <span class="nav-text">一个最简单的配置项包含以下信息</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#常见前端构建上线过程是这样的：配置构建输出目录为dist-构建完成后对dist目录进行打包，然后将其内容（结果文件往往会不止一个）发布到CDN上"><span class="nav-number">4.0.1.2.</span> <span class="nav-text">常见前端构建上线过程是这样的：配置构建输出目录为dist,构建完成后对dist目录进行打包，然后将其内容（结果文件往往会不止一个）发布到CDN上</span></a></li></ol></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#安装插件"><span class="nav-number">5.</span> <span class="nav-text">安装插件</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#实施构建"><span class="nav-number">6.</span> <span class="nav-text">实施构建</span></a></li></ol></div>
             
 
           </div>
@@ -747,9 +793,9 @@ ECMAScript是JavaScript语言的国际标准，而JavaScript是ECMAScript的实�
 
     <script type="text/javascript">
       var disqus_shortname = 'helloc';
-      var disqus_identifier = '2016/09/08/ECMAScript6简介/';
+      var disqus_identifier = '2016/11/22/webpack/';
 
-      var disqus_title = "ECMAScript6简介";
+      var disqus_title = "webpack";
 
 
       function run_disqus_script(disqus_script) {
