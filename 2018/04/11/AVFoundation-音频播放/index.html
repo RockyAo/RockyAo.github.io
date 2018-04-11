@@ -125,8 +125,8 @@ Ambi">
 
 
 Ambi">
-<meta property="og:image" content="http://share.ra.com/./images/AVFoundation_AVAudioPlayer_Info_Setting.png">
-<meta property="og:updated_time" content="2018-04-11T13:00:08.450Z">
+<meta property="og:image" content="https://github.com/RockyAo/AVFoundationDemo/blob/master/images/AVFoundation_AVAudioPlayer_Info_Setting.png?raw=true">
+<meta property="og:updated_time" content="2018-04-11T13:06:22.778Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="AVFoundation(二)-AVAudioPlayer音频播放">
 <meta name="twitter:description" content="我们首先先看几个相关概念
@@ -146,7 +146,7 @@ Ambi">
 
 
 Ambi">
-<meta name="twitter:image" content="http://share.ra.com/./images/AVFoundation_AVAudioPlayer_Info_Setting.png">
+<meta name="twitter:image" content="https://github.com/RockyAo/AVFoundationDemo/blob/master/images/AVFoundation_AVAudioPlayer_Info_Setting.png?raw=true">
 
 
 
@@ -525,7 +525,7 @@ Ambi">
 <h4 id="rate"><a href="#rate" class="headerlink" title="rate"></a>rate</h4><p>修改播放速率（在不改变音调的情况下），取值范围 0.5——2.0 即 半速到两倍速</p>
 <h4 id="numberOfLoops"><a href="#numberOfLoops" class="headerlink" title="numberOfLoops"></a>numberOfLoops</h4><p>循环次数，设置大于0的值可以指定播放器循环n次，如果值为 <strong>-1</strong> 可以无限循环</p>
 <h2 id="设备锁定状态下继续播放音频"><a href="#设备锁定状态下继续播放音频" class="headerlink" title="设备锁定状态下继续播放音频"></a>设备锁定状态下继续播放音频</h2><p>需要设置info.plist</p>
-<p><img src="./images/AVFoundation_AVAudioPlayer_Info_Setting.png" alt="info.plist设置"></p>
+<p><img src="https://github.com/RockyAo/AVFoundationDemo/blob/master/images/AVFoundation_AVAudioPlayer_Info_Setting.png?raw=true" alt="info.plist设置"></p>
 <p>添加 <strong>Required background modes</strong> 并在其下添加 App plays audio or streams audio/video using AirPlay</p>
 <h2 id="处理FaceTime、电话等引起的中断"><a href="#处理FaceTime、电话等引起的中断" class="headerlink" title="处理FaceTime、电话等引起的中断"></a>处理FaceTime、电话等引起的中断</h2><p>我们需要注册一个通知来监听 <strong>AVAudioSessionInterruption</strong> 。</p>
 <figure class="highlight swift"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line"><span class="type">NotificationCenter</span>.<span class="keyword">default</span>.addObserver(<span class="keyword">self</span>,</div><div class="line">                           selector: #selector(handleInterruption(notification:)),</div><div class="line">                           name: <span class="type">Notification</span>.<span class="type">Name</span>.<span class="type">AVAudioSessionInterruption</span>,</div><div class="line">                           object: <span class="type">AVAudioSession</span>.sharedInstance())</div></pre></td></tr></table></figure>
@@ -536,6 +536,7 @@ Ambi">
 <h2 id="处理线路改变引起的中断（耳机插拔）"><a href="#处理线路改变引起的中断（耳机插拔）" class="headerlink" title="处理线路改变引起的中断（耳机插拔）"></a>处理线路改变引起的中断（耳机插拔）</h2><p>在iOS设备上添加或移除音频输入、输出设备时 AVAudioSession会广播一个名为 <strong>AVAudioSessionRouteChange</strong> 的通知</p>
 <p>同样可以通过info字典来判断用户行为。例如可以在耳机线断开后停止播放音乐等</p>
 <figure class="highlight swift"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div></pre></td><td class="code"><pre><div class="line"><span class="type">NotificationCenter</span>.<span class="keyword">default</span>.addObserver(<span class="keyword">self</span>,</div><div class="line">                           selector: #selector(handleRouteChange(notification:)),</div><div class="line">                           name: <span class="type">Notification</span>.<span class="type">Name</span>.<span class="type">AVAudioSessionRouteChange</span>,</div><div class="line">                           object: <span class="type">AVAudioSession</span>.sharedInstance())</div><div class="line">                           </div><div class="line"></div><div class="line"><span class="comment">///处理线路改变</span></div><div class="line">    <span class="meta">@objc</span> <span class="keyword">private</span> <span class="function"><span class="keyword">func</span> <span class="title">handleRouteChange</span><span class="params">(notification:Notification)</span></span>&#123;</div><div class="line">        <span class="keyword">guard</span> <span class="keyword">let</span> info = notification.userInfo ,</div><div class="line">                <span class="keyword">let</span> reason = info[<span class="type">AVAudioSessionRouteChangeReasonKey</span>] <span class="keyword">as</span>? <span class="type">AVAudioSessionRouteChangeReason</span></div><div class="line">            <span class="keyword">else</span> &#123; <span class="keyword">return</span>  &#125;</div><div class="line">        </div><div class="line">        <span class="keyword">if</span> reason == .oldDeviceUnavailable &#123;</div><div class="line">            </div><div class="line">            <span class="keyword">guard</span> <span class="keyword">let</span> previesRoute = info[<span class="type">AVAudioSessionRouteChangePreviousRouteKey</span>] <span class="keyword">as</span>? <span class="type">AVAudioSessionRouteDescription</span>,</div><div class="line">                    <span class="keyword">let</span> previousOutput = previesRoute.outputs.first <span class="keyword">else</span> &#123; <span class="keyword">return</span> &#125;</div><div class="line">            </div><div class="line">            <span class="keyword">if</span> previousOutput.portType == <span class="type">AVAudioSessionPortHeadphones</span> &#123;</div><div class="line">                stop()</div><div class="line">                <span class="keyword">if</span> <span class="keyword">let</span> delegate = <span class="keyword">self</span>.delegate &#123;</div><div class="line">                    delegate.playbackStop()</div><div class="line">                &#125;</div><div class="line">            &#125;</div><div class="line">        &#125;</div><div class="line">    &#125;</div></pre></td></tr></table></figure>
+<p><a href="https://github.com/RockyAo/AVFoundationDemo/tree/master/PlayAndRecordAudio" target="_blank" rel="external">演示demo下载</a></p>
 
       
     </div>
