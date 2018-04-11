@@ -1,0 +1,1048 @@
+<!doctype html>
+
+
+
+  
+
+
+<html class="theme-next mist use-motion" lang="zh-Hans">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+  
+  
+  
+  
+
+  
+    
+    
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+    
+    
+    <link href="//fonts.googleapis.com/css?family=Lato:300,300italic,400,400italic,700,700italic&subset=latin,latin-ext" rel="stylesheet" type="text/css">
+  
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.0" rel="stylesheet" type="text/css" />
+
+
+  <meta name="keywords" content="Swift,AVFoundation," />
+
+
+
+
+
+
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico?v=5.1.0" />
+
+
+
+
+
+
+<meta name="description" content="我们首先先看几个相关概念
+音频会话音频会话在应用程序和操作系统之间扮演中间人的角色，提供简单的方法是OS得知应用程序应该如何与iOS音频环境进行交互
+可以通过 AVAudioSession.sharedInstance() 来操作系统提供的音频会话
+音频会话的分类AVFoundation 有7中分类来描述应用程序所使用的音频行为
+
+
+
+分类
+作用
+是否允许混音
+音频输入
+音频输出
+
+
+
+
+Ambi">
+<meta property="og:type" content="article">
+<meta property="og:title" content="AVFoundation(二)-AVAudioPlayer音频播放">
+<meta property="og:url" content="http://share.ra.com/2018/04/11/AVFoundation-音频播放/index.html">
+<meta property="og:site_name" content="如果全世界都说C语言">
+<meta property="og:description" content="我们首先先看几个相关概念
+音频会话音频会话在应用程序和操作系统之间扮演中间人的角色，提供简单的方法是OS得知应用程序应该如何与iOS音频环境进行交互
+可以通过 AVAudioSession.sharedInstance() 来操作系统提供的音频会话
+音频会话的分类AVFoundation 有7中分类来描述应用程序所使用的音频行为
+
+
+
+分类
+作用
+是否允许混音
+音频输入
+音频输出
+
+
+
+
+Ambi">
+<meta property="og:image" content="http://share.ra.com/./images/AVFoundation_AVAudioPlayer_Info_Setting.png">
+<meta property="og:updated_time" content="2018-04-11T13:00:08.450Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="AVFoundation(二)-AVAudioPlayer音频播放">
+<meta name="twitter:description" content="我们首先先看几个相关概念
+音频会话音频会话在应用程序和操作系统之间扮演中间人的角色，提供简单的方法是OS得知应用程序应该如何与iOS音频环境进行交互
+可以通过 AVAudioSession.sharedInstance() 来操作系统提供的音频会话
+音频会话的分类AVFoundation 有7中分类来描述应用程序所使用的音频行为
+
+
+
+分类
+作用
+是否允许混音
+音频输入
+音频输出
+
+
+
+
+Ambi">
+<meta name="twitter:image" content="http://share.ra.com/./images/AVFoundation_AVAudioPlayer_Info_Setting.png">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Mist',
+    sidebar: {"position":"left","display":"post","offset":12,"offset_float":0,"b2t":false,"scrollpercent":false},
+    fancybox: true,
+    motion: true,
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://share.ra.com/2018/04/11/AVFoundation-音频播放/"/>
+
+
+
+
+
+  <title> AVFoundation(二)-AVAudioPlayer音频播放 | 如果全世界都说C语言 </title>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail ">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">如果全世界都说C语言</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle"></p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br />
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br />
+            
+            标签
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-user"></i> <br />
+            
+            关于
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+    <link itemprop="mainEntityOfPage" href="http://share.ra.com/2018/04/11/AVFoundation-音频播放/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="敖老黑">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/uploads/avatar.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="如果全世界都说C语言">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+            
+            
+              
+                AVFoundation(二)-AVAudioPlayer音频播放
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-04-11T20:32:37+08:00">
+                2018-04-11
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/iOS/" itemprop="url" rel="index">
+                    <span itemprop="name">iOS</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+              <span class="post-comments-count">
+                <span class="post-meta-divider">|</span>
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-comment-o"></i>
+                </span>
+                <a href="/2018/04/11/AVFoundation-音频播放/#comments" itemprop="discussionUrl">
+                  <span class="post-comments-count disqus-comment-count" data-disqus-identifier="2018/04/11/AVFoundation-音频播放/" itemprop="commentCount"></span>
+                </a>
+              </span>
+            
+          
+
+          
+          
+             <span id="/2018/04/11/AVFoundation-音频播放/" class="leancloud_visitors" data-flag-title="AVFoundation(二)-AVAudioPlayer音频播放">
+               <span class="post-meta-divider">|</span>
+               <span class="post-meta-item-icon">
+                 <i class="fa fa-eye"></i>
+               </span>
+               
+                 <span class="post-meta-item-text">阅读次数 </span>
+               
+                 <span class="leancloud-visitors-count"></span>
+             </span>
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <p>我们首先先看几个相关概念</p>
+<h1 id="音频会话"><a href="#音频会话" class="headerlink" title="音频会话"></a>音频会话</h1><p>音频会话在应用程序和操作系统之间扮演中间人的角色，提供简单的方法是OS得知应用程序应该如何与iOS音频环境进行交互</p>
+<p>可以通过 <strong>AVAudioSession.sharedInstance()</strong> 来操作系统提供的音频会话</p>
+<h1 id="音频会话的分类"><a href="#音频会话的分类" class="headerlink" title="音频会话的分类"></a>音频会话的分类</h1><p>AVFoundation 有7中分类来描述应用程序所使用的音频行为</p>
+<table>
+<thead>
+<tr>
+<th style="text-align:center">分类</th>
+<th style="text-align:center">作用</th>
+<th style="text-align:center">是否允许混音</th>
+<th style="text-align:center">音频输入</th>
+<th style="text-align:center">音频输出</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:center">Ambient</td>
+<td style="text-align:center">游戏、应用程序</td>
+<td style="text-align:center">√</td>
+<td style="text-align:center"></td>
+<td style="text-align:center">√</td>
+</tr>
+<tr>
+<td style="text-align:center">Solo Ambient(默认)</td>
+<td style="text-align:center">游戏、应用程序</td>
+<td style="text-align:center"></td>
+<td style="text-align:center"></td>
+<td style="text-align:center">√</td>
+</tr>
+<tr>
+<td style="text-align:center">Playback</td>
+<td style="text-align:center">音频和视频播放器</td>
+<td style="text-align:center">可选择</td>
+<td style="text-align:center"></td>
+<td style="text-align:center">√</td>
+</tr>
+<tr>
+<td style="text-align:center">Record</td>
+<td style="text-align:center">录音机、音频捕捉</td>
+<td style="text-align:center"></td>
+<td style="text-align:center">√</td>
+<td style="text-align:center">√</td>
+</tr>
+<tr>
+<td style="text-align:center">Play and Record</td>
+<td style="text-align:center">VoIP、语音聊天</td>
+<td style="text-align:center">可选</td>
+<td style="text-align:center">√</td>
+<td style="text-align:center">√</td>
+</tr>
+<tr>
+<td style="text-align:center">Audio Processing</td>
+<td style="text-align:center">离线会话和处理</td>
+<td style="text-align:center"></td>
+<td style="text-align:center"></td>
+<td style="text-align:center"></td>
+</tr>
+<tr>
+<td style="text-align:center">Multi-Route</td>
+<td style="text-align:center">使用外部颖健的高级A/V 应用程序</td>
+<td style="text-align:center"></td>
+<td style="text-align:center">√</td>
+<td style="text-align:center">√</td>
+</tr>
+</tbody>
+</table>
+<blockquote>
+<p>其中一些分类可以通过 options和 modes 进行自定义开发</p>
+</blockquote>
+<h1 id="配置音频会话"><a href="#配置音频会话" class="headerlink" title="配置音频会话"></a>配置音频会话</h1><p>音频会话在应用程序的声明周期中是可以修改的，但通常我们只对其进行一次配置. 通常在下面方法中进行配置</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div></pre></td><td class="code"><pre><div class="line">func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplicationLaunchOptionsKey: Any]?) -&gt; Bool &#123;</div><div class="line">    <span class="comment">// Override point for customization after application launch.</span></div><div class="line">    </div><div class="line">    <span class="keyword">let</span> audioSession = AVAudioSession.sharedInstance()</div><div class="line">    </div><div class="line">    <span class="keyword">do</span> &#123;</div><div class="line">        </div><div class="line">        <span class="keyword">try</span> audioSession.setCategory(AVAudioSessionCategoryPlayback)</div><div class="line">        <span class="keyword">try</span> audioSession.setActive(<span class="literal">true</span>)</div><div class="line">        </div><div class="line">    &#125; <span class="keyword">catch</span> <span class="keyword">let</span> error &#123;</div><div class="line">        print(<span class="string">"设置音频会话失败 \(error)"</span>)</div><div class="line">    &#125;</div><div class="line">    </div><div class="line">    <span class="keyword">return</span> <span class="literal">true</span></div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<blockquote>
+<p>注意修改category之后需要调用  setActive来激活修改</p>
+</blockquote>
+<h1 id="AVAudioPlayer"><a href="#AVAudioPlayer" class="headerlink" title="AVAudioPlayer"></a>AVAudioPlayer</h1><p>AVAudioPlayer构建于Core Audio 中的 C-Based Audio Queue Services 的顶层，所以AVAudioPlayer可以提供所有 Audio Queue Services 的功能</p>
+<blockquote>
+<p>除非从网络流中播放音频，需要访问原始音频样本或者需要非常低的延迟，否则AVAudioPlayer都能胜任</p>
+</blockquote>
+<h2 id="AVAudioPlayer的简单使用"><a href="#AVAudioPlayer的简单使用" class="headerlink" title="AVAudioPlayer的简单使用"></a>AVAudioPlayer的简单使用</h2><figure class="highlight swift"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">let</span> fileUrl = <span class="type">Bundle</span>.main.url(forResource: <span class="string">"rock"</span>, withExtension: <span class="string">"mp3"</span>)</div><div class="line">       </div><div class="line"><span class="keyword">do</span> &#123;</div><div class="line">   player = <span class="keyword">try</span> <span class="type">AVAudioPlayer</span>(contentsOf: fileUrl)</div><div class="line">&#125; <span class="keyword">catch</span> <span class="keyword">let</span> error &#123;</div><div class="line">   <span class="built_in">print</span>(<span class="string">"error with <span class="subst">\(error)</span>"</span>)</div><div class="line">&#125;</div><div class="line">       </div><div class="line"><span class="keyword">if</span> <span class="keyword">let</span> player = player &#123;</div><div class="line">   player.prepareToPlay()</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>调用prepareToPlay方法会取得需要的音频硬件并预加载到Audio Queue 的缓冲区。调用play方法会隐性激活该方法。</p>
+<h2 id="AVAudioPlayer的播放控制"><a href="#AVAudioPlayer的播放控制" class="headerlink" title="AVAudioPlayer的播放控制"></a>AVAudioPlayer的播放控制</h2><h4 id="play、stop、prepareToPlay、pause"><a href="#play、stop、prepareToPlay、pause" class="headerlink" title="play、stop、prepareToPlay、pause"></a>play、stop、prepareToPlay、pause</h4><ul>
+<li>play方法可以立即播放音频</li>
+<li>pause可以暂停播放</li>
+<li>stop可以停止播放</li>
+<li>stop方法会撤销调用prepareToPlay方法所做的设置</li>
+</ul>
+<h4 id="pan"><a href="#pan" class="headerlink" title="pan"></a>pan</h4><p>立体播放声音修改，取值范围 -1.0(极左) —— 1.0(极右)，0.0居中</p>
+<h4 id="volume"><a href="#volume" class="headerlink" title="volume"></a>volume</h4><p>修改声音大小，取值范围 0.0——1.0</p>
+<h4 id="rate"><a href="#rate" class="headerlink" title="rate"></a>rate</h4><p>修改播放速率（在不改变音调的情况下），取值范围 0.5——2.0 即 半速到两倍速</p>
+<h4 id="numberOfLoops"><a href="#numberOfLoops" class="headerlink" title="numberOfLoops"></a>numberOfLoops</h4><p>循环次数，设置大于0的值可以指定播放器循环n次，如果值为 <strong>-1</strong> 可以无限循环</p>
+<h2 id="设备锁定状态下继续播放音频"><a href="#设备锁定状态下继续播放音频" class="headerlink" title="设备锁定状态下继续播放音频"></a>设备锁定状态下继续播放音频</h2><p>需要设置info.plist</p>
+<p><img src="./images/AVFoundation_AVAudioPlayer_Info_Setting.png" alt="info.plist设置"></p>
+<p>添加 <strong>Required background modes</strong> 并在其下添加 App plays audio or streams audio/video using AirPlay</p>
+<h2 id="处理FaceTime、电话等引起的中断"><a href="#处理FaceTime、电话等引起的中断" class="headerlink" title="处理FaceTime、电话等引起的中断"></a>处理FaceTime、电话等引起的中断</h2><p>我们需要注册一个通知来监听 <strong>AVAudioSessionInterruption</strong> 。</p>
+<figure class="highlight swift"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line"><span class="type">NotificationCenter</span>.<span class="keyword">default</span>.addObserver(<span class="keyword">self</span>,</div><div class="line">                           selector: #selector(handleInterruption(notification:)),</div><div class="line">                           name: <span class="type">Notification</span>.<span class="type">Name</span>.<span class="type">AVAudioSessionInterruption</span>,</div><div class="line">                           object: <span class="type">AVAudioSession</span>.sharedInstance())</div></pre></td></tr></table></figure>
+<p>通知中userinfo字典会包含相关信息。我们可以通过其做一些判断。</p>
+<p>首先通过 <strong>AVAudioSessionInterruptionTypeKey</strong> 可以取出中断类型 <strong>AVAudioSessionInterruptionType</strong> 的枚举值。</p>
+<p>如果中断类型为 <strong>ended</strong> userinfo字典会包含一个 <strong>AVAudioSessionInterruptionOptions</strong> 值来表明音频会话是否已经重新激活</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div></pre></td><td class="code"><pre><div class="line">@objc private func handleInterruption(notification:Notification)&#123;</div><div class="line">        guard let info = notification.userInfo ,</div><div class="line">                let type = info[AVAudioSessionInterruptionTypeKey] as? AVAudioSessionInterruptionType else &#123; return &#125;</div><div class="line">        </div><div class="line">        if type == .began &#123;</div><div class="line">            stop()</div><div class="line">            if let delegate = self.delegate &#123;</div><div class="line">                delegate.playbackStop()</div><div class="line">            &#125;</div><div class="line">        &#125;else&#123;</div><div class="line">            </div><div class="line">            guard let options = info[AVAudioSessionInterruptionOptionKey] as? AVAudioSessionInterruptionOptions else &#123; return &#125;</div><div class="line">            </div><div class="line">            if options == .shouldResume&#123;</div><div class="line">                play()</div><div class="line">                </div><div class="line">                if let delegate = self.delegate &#123;</div><div class="line">                    delegate.playbackBegan()</div><div class="line">                &#125;</div><div class="line">            &#125;</div><div class="line">        &#125;</div><div class="line"> &#125;</div></pre></td></tr></table></figure>
+<h2 id="处理线路改变引起的中断（耳机插拔）"><a href="#处理线路改变引起的中断（耳机插拔）" class="headerlink" title="处理线路改变引起的中断（耳机插拔）"></a>处理线路改变引起的中断（耳机插拔）</h2><p>在iOS设备上添加或移除音频输入、输出设备时 AVAudioSession会广播一个名为 <strong>AVAudioSessionRouteChange</strong> 的通知</p>
+<p>同样可以通过info字典来判断用户行为。例如可以在耳机线断开后停止播放音乐等</p>
+<figure class="highlight swift"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div></pre></td><td class="code"><pre><div class="line"><span class="type">NotificationCenter</span>.<span class="keyword">default</span>.addObserver(<span class="keyword">self</span>,</div><div class="line">                           selector: #selector(handleRouteChange(notification:)),</div><div class="line">                           name: <span class="type">Notification</span>.<span class="type">Name</span>.<span class="type">AVAudioSessionRouteChange</span>,</div><div class="line">                           object: <span class="type">AVAudioSession</span>.sharedInstance())</div><div class="line">                           </div><div class="line"></div><div class="line"><span class="comment">///处理线路改变</span></div><div class="line">    <span class="meta">@objc</span> <span class="keyword">private</span> <span class="function"><span class="keyword">func</span> <span class="title">handleRouteChange</span><span class="params">(notification:Notification)</span></span>&#123;</div><div class="line">        <span class="keyword">guard</span> <span class="keyword">let</span> info = notification.userInfo ,</div><div class="line">                <span class="keyword">let</span> reason = info[<span class="type">AVAudioSessionRouteChangeReasonKey</span>] <span class="keyword">as</span>? <span class="type">AVAudioSessionRouteChangeReason</span></div><div class="line">            <span class="keyword">else</span> &#123; <span class="keyword">return</span>  &#125;</div><div class="line">        </div><div class="line">        <span class="keyword">if</span> reason == .oldDeviceUnavailable &#123;</div><div class="line">            </div><div class="line">            <span class="keyword">guard</span> <span class="keyword">let</span> previesRoute = info[<span class="type">AVAudioSessionRouteChangePreviousRouteKey</span>] <span class="keyword">as</span>? <span class="type">AVAudioSessionRouteDescription</span>,</div><div class="line">                    <span class="keyword">let</span> previousOutput = previesRoute.outputs.first <span class="keyword">else</span> &#123; <span class="keyword">return</span> &#125;</div><div class="line">            </div><div class="line">            <span class="keyword">if</span> previousOutput.portType == <span class="type">AVAudioSessionPortHeadphones</span> &#123;</div><div class="line">                stop()</div><div class="line">                <span class="keyword">if</span> <span class="keyword">let</span> delegate = <span class="keyword">self</span>.delegate &#123;</div><div class="line">                    delegate.playbackStop()</div><div class="line">                &#125;</div><div class="line">            &#125;</div><div class="line">        &#125;</div><div class="line">    &#125;</div></pre></td></tr></table></figure>
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/Swift/" rel="tag"># Swift</a>
+          
+            <a href="/tags/AVFoundation/" rel="tag"># AVFoundation</a>
+          
+        </div>
+      
+
+      
+        
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2018/04/08/AVFoundation-文字转语音/" rel="next" title="AVFoundation(一)-文字转换语音播放">
+                <i class="fa fa-chevron-left"></i> AVFoundation(一)-文字转换语音播放
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+  <div class="comments" id="comments">
+    
+      <div id="disqus_thread">
+        <noscript>
+          Please enable JavaScript to view the
+          <a href="//disqus.com/?ref_noscript">comments powered by Disqus.</a>
+        </noscript>
+      </div>
+    
+  </div>
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap" >
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+          <img class="site-author-image" itemprop="image"
+               src="/uploads/avatar.jpg"
+               alt="敖老黑" />
+          <p class="site-author-name" itemprop="name">敖老黑</p>
+           
+              <p class="site-description motion-element" itemprop="description">技术分享</p>
+          
+        </div>
+        <nav class="site-state motion-element">
+
+          
+            <div class="site-state-item site-state-posts">
+              <a href="/archives">
+                <span class="site-state-item-count">17</span>
+                <span class="site-state-item-name">日志</span>
+              </a>
+            </div>
+          
+
+          
+            
+            
+            <div class="site-state-item site-state-categories">
+              <a href="/categories/index.html">
+                <span class="site-state-item-count">4</span>
+                <span class="site-state-item-name">分类</span>
+              </a>
+            </div>
+          
+
+          
+            
+            
+            <div class="site-state-item site-state-tags">
+              <a href="/tags/index.html">
+                <span class="site-state-item-count">13</span>
+                <span class="site-state-item-name">标签</span>
+              </a>
+            </div>
+          
+
+        </nav>
+
+        
+
+        <div class="links-of-author motion-element">
+          
+            
+              <span class="links-of-author-item">
+                <a href="https://github.com/RockyAo" target="_blank" title="GitHub">
+                  
+                    <i class="fa fa-fw fa-github"></i>
+                  
+                  GitHub
+                </a>
+              </span>
+            
+              <span class="links-of-author-item">
+                <a href="https://twitter.com/CGSizeMake" target="_blank" title="Twitter">
+                  
+                    <i class="fa fa-fw fa-twitter"></i>
+                  
+                  Twitter
+                </a>
+              </span>
+            
+              <span class="links-of-author-item">
+                <a href="http://weibo.com/5357889389/profile?rightmod=1&wvr=6&mod=personinfo" target="_blank" title="Weibo">
+                  
+                    <i class="fa fa-fw fa-weibo"></i>
+                  
+                  Weibo
+                </a>
+              </span>
+            
+          
+        </div>
+
+        
+        
+
+        
+        
+
+        
+
+
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#音频会话"><span class="nav-number">1.</span> <span class="nav-text">音频会话</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#音频会话的分类"><span class="nav-number">2.</span> <span class="nav-text">音频会话的分类</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#配置音频会话"><span class="nav-number">3.</span> <span class="nav-text">配置音频会话</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#AVAudioPlayer"><span class="nav-number">4.</span> <span class="nav-text">AVAudioPlayer</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#AVAudioPlayer的简单使用"><span class="nav-number">4.1.</span> <span class="nav-text">AVAudioPlayer的简单使用</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#AVAudioPlayer的播放控制"><span class="nav-number">4.2.</span> <span class="nav-text">AVAudioPlayer的播放控制</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#play、stop、prepareToPlay、pause"><span class="nav-number">4.2.0.1.</span> <span class="nav-text">play、stop、prepareToPlay、pause</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#pan"><span class="nav-number">4.2.0.2.</span> <span class="nav-text">pan</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#volume"><span class="nav-number">4.2.0.3.</span> <span class="nav-text">volume</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#rate"><span class="nav-number">4.2.0.4.</span> <span class="nav-text">rate</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#numberOfLoops"><span class="nav-number">4.2.0.5.</span> <span class="nav-text">numberOfLoops</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#设备锁定状态下继续播放音频"><span class="nav-number">4.3.</span> <span class="nav-text">设备锁定状态下继续播放音频</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#处理FaceTime、电话等引起的中断"><span class="nav-number">4.4.</span> <span class="nav-text">处理FaceTime、电话等引起的中断</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#处理线路改变引起的中断（耳机插拔）"><span class="nav-number">4.5.</span> <span class="nav-text">处理线路改变引起的中断（耳机插拔）</span></a></li></ol></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright" >
+  
+  &copy; 
+  <span itemprop="copyrightYear">2018</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">敖老黑</span>
+</div>
+
+
+<div class="powered-by">
+  由 <a class="theme-link" href="https://hexo.io">Hexo</a> 强力驱动
+</div>
+
+<div class="theme-info">
+  主题 -
+  <a class="theme-link" href="https://github.com/iissnan/hexo-theme-next">
+    NexT.Mist
+  </a>
+</div>
+
+
+        
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+  
+  <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+
+  
+  <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+
+  
+  <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.0"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.0"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.0"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.0"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.0"></script>
+
+
+
+  
+
+
+
+  
+
+    <script type="text/javascript">
+      var disqus_shortname = 'helloc';
+      var disqus_identifier = '2018/04/11/AVFoundation-音频播放/';
+
+      var disqus_title = "AVFoundation(二)-AVAudioPlayer音频播放";
+
+
+      function run_disqus_script(disqus_script) {
+        var dsq = document.createElement('script');
+        dsq.type = 'text/javascript';
+        dsq.async = true;
+        dsq.src = '//' + disqus_shortname + '.disqus.com/' + disqus_script;
+        (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+      }
+
+      run_disqus_script('count.js');
+
+      
+        var disqus_config = function () {
+            this.page.url = disqus_url;
+            this.page.identifier = disqus_identifier;
+            this.page.title = disqus_title;
+        };
+        run_disqus_script('embed.js');
+      
+
+    </script>
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+  <script src="https://cdn1.lncld.net/static/js/av-core-mini-0.6.1.js"></script>
+  <script>AV.initialize("iotCMn6bsX6mradrIyTWMyXI-gzGzoHsz", "f5bwNMQ04gmiEsX1uVPGkoGf");</script>
+  <script>
+    function showTime(Counter) {
+      var query = new AV.Query(Counter);
+      var entries = [];
+      var $visitors = $(".leancloud_visitors");
+
+      $visitors.each(function () {
+        entries.push( $(this).attr("id").trim() );
+      });
+
+      query.containedIn('url', entries);
+      query.find()
+        .done(function (results) {
+          var COUNT_CONTAINER_REF = '.leancloud-visitors-count';
+
+          if (results.length === 0) {
+            $visitors.find(COUNT_CONTAINER_REF).text(0);
+            return;
+          }
+
+          for (var i = 0; i < results.length; i++) {
+            var item = results[i];
+            var url = item.get('url');
+            var time = item.get('time');
+            var element = document.getElementById(url);
+
+            $(element).find(COUNT_CONTAINER_REF).text(time);
+          }
+          for(var i = 0; i < entries.length; i++) {
+            var url = entries[i];
+            var element = document.getElementById(url);
+            var countSpan = $(element).find(COUNT_CONTAINER_REF);
+            if( countSpan.text() == '') {
+              countSpan.text(0);
+            }
+          }
+        })
+        .fail(function (object, error) {
+          console.log("Error: " + error.code + " " + error.message);
+        });
+    }
+
+    function addCount(Counter) {
+      var $visitors = $(".leancloud_visitors");
+      var url = $visitors.attr('id').trim();
+      var title = $visitors.attr('data-flag-title').trim();
+      var query = new AV.Query(Counter);
+
+      query.equalTo("url", url);
+      query.find({
+        success: function(results) {
+          if (results.length > 0) {
+            var counter = results[0];
+            counter.fetchWhenSave(true);
+            counter.increment("time");
+            counter.save(null, {
+              success: function(counter) {
+                var $element = $(document.getElementById(url));
+                $element.find('.leancloud-visitors-count').text(counter.get('time'));
+              },
+              error: function(counter, error) {
+                console.log('Failed to save Visitor num, with error message: ' + error.message);
+              }
+            });
+          } else {
+            var newcounter = new Counter();
+            /* Set ACL */
+            var acl = new AV.ACL();
+            acl.setPublicReadAccess(true);
+            acl.setPublicWriteAccess(true);
+            newcounter.setACL(acl);
+            /* End Set ACL */
+            newcounter.set("title", title);
+            newcounter.set("url", url);
+            newcounter.set("time", 1);
+            newcounter.save(null, {
+              success: function(newcounter) {
+                var $element = $(document.getElementById(url));
+                $element.find('.leancloud-visitors-count').text(newcounter.get('time'));
+              },
+              error: function(newcounter, error) {
+                console.log('Failed to create');
+              }
+            });
+          }
+        },
+        error: function(error) {
+          console.log('Error:' + error.code + " " + error.message);
+        }
+      });
+    }
+
+    $(function() {
+      var Counter = AV.Object.extend("Counter");
+      if ($('.leancloud_visitors').length == 1) {
+        addCount(Counter);
+      } else if ($('.post-title-link').length > 1) {
+        showTime(Counter);
+      }
+    });
+  </script>
+
+
+
+  
+
+  
+
+  
+
+</body>
+</html>
