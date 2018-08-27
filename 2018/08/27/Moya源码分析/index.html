@@ -1,0 +1,1038 @@
+<!doctype html>
+
+
+
+  
+
+
+<html class="theme-next mist use-motion" lang="zh-Hans">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+  
+  
+  
+  
+
+  
+    
+    
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+    
+    
+    <link href="//fonts.googleapis.com/css?family=Lato:300,300italic,400,400italic,700,700italic&subset=latin,latin-ext" rel="stylesheet" type="text/css">
+  
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.0" rel="stylesheet" type="text/css" />
+
+
+  <meta name="keywords" content="Swift,Moya," />
+
+
+
+
+
+
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico?v=5.1.0" />
+
+
+
+
+
+
+<meta name="description" content="Moya 源码分析面向协议编程OOP 带来的三个问题
+横切关注点
+菱形缺陷
+动态派发的安全性
+
+面向协议参考文章
+面向协议编程1
+面向协议编程2
+
+Moya简单介绍和使用Moya是一个基于Alamofire开发的，轻量级的Swift网络层。Moya的可扩展性非常强，可以方便的RXSwift等函数式框架结合。
+简单使用12345678910111213141516171819202122232425">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Moya 源码分析">
+<meta property="og:url" content="http://share.ra.com/2018/08/27/Moya源码分析/index.html">
+<meta property="og:site_name" content="如果全世界都说C语言">
+<meta property="og:description" content="Moya 源码分析面向协议编程OOP 带来的三个问题
+横切关注点
+菱形缺陷
+动态派发的安全性
+
+面向协议参考文章
+面向协议编程1
+面向协议编程2
+
+Moya简单介绍和使用Moya是一个基于Alamofire开发的，轻量级的Swift网络层。Moya的可扩展性非常强，可以方便的RXSwift等函数式框架结合。
+简单使用12345678910111213141516171819202122232425">
+<meta property="og:image" content="http://share.ra.com/./moya_project.png">
+<meta property="og:updated_time" content="2018-08-27T08:48:31.000Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Moya 源码分析">
+<meta name="twitter:description" content="Moya 源码分析面向协议编程OOP 带来的三个问题
+横切关注点
+菱形缺陷
+动态派发的安全性
+
+面向协议参考文章
+面向协议编程1
+面向协议编程2
+
+Moya简单介绍和使用Moya是一个基于Alamofire开发的，轻量级的Swift网络层。Moya的可扩展性非常强，可以方便的RXSwift等函数式框架结合。
+简单使用12345678910111213141516171819202122232425">
+<meta name="twitter:image" content="http://share.ra.com/./moya_project.png">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Mist',
+    sidebar: {"position":"left","display":"post","offset":12,"offset_float":0,"b2t":false,"scrollpercent":false},
+    fancybox: true,
+    motion: true,
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://share.ra.com/2018/08/27/Moya源码分析/"/>
+
+
+
+
+
+  <title> Moya 源码分析 | 如果全世界都说C语言 </title>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail ">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">如果全世界都说C语言</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle"></p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br />
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br />
+            
+            标签
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-user"></i> <br />
+            
+            关于
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+    <link itemprop="mainEntityOfPage" href="http://share.ra.com/2018/08/27/Moya源码分析/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="敖老黑">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/uploads/avatar.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="如果全世界都说C语言">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+            
+            
+              
+                Moya 源码分析
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-08-27T16:48:37+08:00">
+                2018-08-27
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/iOS/" itemprop="url" rel="index">
+                    <span itemprop="name">iOS</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+              <span class="post-comments-count">
+                <span class="post-meta-divider">|</span>
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-comment-o"></i>
+                </span>
+                <a href="/2018/08/27/Moya源码分析/#comments" itemprop="discussionUrl">
+                  <span class="post-comments-count disqus-comment-count" data-disqus-identifier="2018/08/27/Moya源码分析/" itemprop="commentCount"></span>
+                </a>
+              </span>
+            
+          
+
+          
+          
+             <span id="/2018/08/27/Moya源码分析/" class="leancloud_visitors" data-flag-title="Moya 源码分析">
+               <span class="post-meta-divider">|</span>
+               <span class="post-meta-item-icon">
+                 <i class="fa fa-eye"></i>
+               </span>
+               
+                 <span class="post-meta-item-text">阅读次数 </span>
+               
+                 <span class="leancloud-visitors-count"></span>
+             </span>
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h1 id="Moya-源码分析"><a href="#Moya-源码分析" class="headerlink" title="Moya 源码分析"></a>Moya 源码分析</h1><h2 id="面向协议编程"><a href="#面向协议编程" class="headerlink" title="面向协议编程"></a>面向协议编程</h2><h4 id="OOP-带来的三个问题"><a href="#OOP-带来的三个问题" class="headerlink" title="OOP 带来的三个问题"></a>OOP 带来的三个问题</h4><ul>
+<li>横切关注点</li>
+<li>菱形缺陷</li>
+<li>动态派发的安全性</li>
+</ul>
+<h4 id="面向协议参考文章"><a href="#面向协议参考文章" class="headerlink" title="面向协议参考文章"></a>面向协议参考文章</h4><ul>
+<li><a href="https://onevcat.com/2016/11/pop-cocoa-1/" target="_blank" rel="external">面向协议编程1</a></li>
+<li><a href="https://onevcat.com/2016/12/pop-cocoa-2/" target="_blank" rel="external">面向协议编程2</a></li>
+</ul>
+<h2 id="Moya简单介绍和使用"><a href="#Moya简单介绍和使用" class="headerlink" title="Moya简单介绍和使用"></a>Moya简单介绍和使用</h2><p>Moya是一个基于Alamofire开发的，轻量级的Swift网络层。Moya的可扩展性非常强，可以方便的RXSwift等函数式框架结合。</p>
+<h3 id="简单使用"><a href="#简单使用" class="headerlink" title="简单使用"></a>简单使用</h3><figure class="highlight swift"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div><div class="line">44</div><div class="line">45</div><div class="line">46</div><div class="line">47</div><div class="line">48</div><div class="line">49</div><div class="line">50</div><div class="line">51</div><div class="line">52</div><div class="line">53</div><div class="line">54</div><div class="line">55</div><div class="line">56</div><div class="line">57</div><div class="line">58</div><div class="line">59</div><div class="line">60</div><div class="line">61</div><div class="line">62</div><div class="line">63</div><div class="line">64</div><div class="line">65</div><div class="line">66</div><div class="line">67</div><div class="line">68</div><div class="line">69</div><div class="line">70</div><div class="line">71</div><div class="line">72</div><div class="line">73</div><div class="line">74</div><div class="line">75</div><div class="line">76</div><div class="line">77</div><div class="line">78</div><div class="line">79</div><div class="line">80</div><div class="line">81</div></pre></td><td class="code"><pre><div class="line"></div><div class="line"><span class="keyword">private</span> <span class="function"><span class="keyword">func</span> <span class="title">JSONResponseDataFormatter</span><span class="params">(<span class="number">_</span> data: Data)</span></span> -&gt; <span class="type">Data</span> &#123;</div><div class="line">    <span class="keyword">do</span> &#123;</div><div class="line">        <span class="keyword">let</span> dataAsJSON = <span class="keyword">try</span> <span class="type">JSONSerialization</span>.jsonObject(with: data)</div><div class="line">        <span class="keyword">let</span> prettyData =  <span class="keyword">try</span> <span class="type">JSONSerialization</span>.data(withJSONObject: dataAsJSON, options: .prettyPrinted)</div><div class="line">        <span class="keyword">return</span> prettyData</div><div class="line">    &#125; <span class="keyword">catch</span> &#123;</div><div class="line">        <span class="keyword">return</span> data <span class="comment">// fallback to original data if it can't be serialized.</span></div><div class="line">    &#125;</div><div class="line">&#125;</div><div class="line"></div><div class="line"><span class="comment">/// 创建请求管理者</span></div><div class="line"></div><div class="line"><span class="keyword">let</span> gitHubProvider = <span class="type">MoyaProvider</span>&lt;<span class="type">GitHub</span>&gt;(plugins: [<span class="type">NetworkLoggerPlugin</span>(verbose: <span class="literal">true</span>, responseDataFormatter: <span class="type">JSONResponseDataFormatter</span>)])</div><div class="line"></div><div class="line"></div><div class="line"><span class="comment">/// 创建请求target</span></div><div class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">enum</span> <span class="title">GitHub</span> </span>&#123;</div><div class="line">    <span class="keyword">case</span> zen</div><div class="line">    <span class="keyword">case</span> userProfile(<span class="type">String</span>)</div><div class="line">    <span class="keyword">case</span> userRepositories(<span class="type">String</span>)</div><div class="line">&#125;</div><div class="line"></div><div class="line"><span class="class"><span class="keyword">extension</span> <span class="title">GitHub</span>: <span class="title">TargetType</span> </span>&#123;</div><div class="line">    <span class="keyword">public</span> <span class="keyword">var</span> baseURL: <span class="type">URL</span> &#123; <span class="keyword">return</span> <span class="type">URL</span>(string: <span class="string">"https://api.github.com"</span>)! &#125;</div><div class="line">    <span class="keyword">public</span> <span class="keyword">var</span> path: <span class="type">String</span> &#123;</div><div class="line">        <span class="keyword">switch</span> <span class="keyword">self</span> &#123;</div><div class="line">        <span class="keyword">case</span> .zen:</div><div class="line">            <span class="keyword">return</span> <span class="string">"/zen"</span></div><div class="line">        <span class="keyword">case</span> .userProfile(<span class="keyword">let</span> name):</div><div class="line">            <span class="keyword">return</span> <span class="string">"/users/<span class="subst">\(name.urlEscaped)</span>"</span></div><div class="line">        <span class="keyword">case</span> .userRepositories(<span class="keyword">let</span> name):</div><div class="line">            <span class="keyword">return</span> <span class="string">"/users/<span class="subst">\(name.urlEscaped)</span>/repos"</span></div><div class="line">        &#125;</div><div class="line">    &#125;</div><div class="line">    <span class="keyword">public</span> <span class="keyword">var</span> method: <span class="type">Moya</span>.<span class="type">Method</span> &#123;</div><div class="line">        <span class="keyword">return</span> .<span class="keyword">get</span></div><div class="line">    &#125;</div><div class="line">    <span class="keyword">public</span> <span class="keyword">var</span> task: <span class="type">Task</span> &#123;</div><div class="line">        <span class="keyword">switch</span> <span class="keyword">self</span> &#123;</div><div class="line">        <span class="keyword">case</span> .userRepositories:</div><div class="line">            <span class="keyword">return</span> .requestParameters(parameters: [<span class="string">"sort"</span>: <span class="string">"pushed"</span>], encoding: <span class="type">URLEncoding</span>.<span class="keyword">default</span>)</div><div class="line">        <span class="keyword">default</span>:</div><div class="line">            <span class="keyword">return</span> .requestPlain</div><div class="line">        &#125;</div><div class="line">    &#125;</div><div class="line">    <span class="keyword">public</span> <span class="keyword">var</span> validationType: <span class="type">ValidationType</span> &#123;</div><div class="line">        <span class="keyword">switch</span> <span class="keyword">self</span> &#123;</div><div class="line">        <span class="keyword">case</span> .zen:</div><div class="line">            <span class="keyword">return</span> .successCodes</div><div class="line">        <span class="keyword">default</span>:</div><div class="line">            <span class="keyword">return</span> .<span class="keyword">none</span></div><div class="line">        &#125;</div><div class="line">    &#125;</div><div class="line">    <span class="keyword">public</span> <span class="keyword">var</span> sampleData: <span class="type">Data</span> &#123;</div><div class="line">        <span class="keyword">switch</span> <span class="keyword">self</span> &#123;</div><div class="line">        <span class="keyword">case</span> .zen:</div><div class="line">            <span class="keyword">return</span> <span class="string">"Half measures are as bad as nothing at all."</span>.data(using: <span class="type">String</span>.<span class="type">Encoding</span>.utf8)!</div><div class="line">        <span class="keyword">case</span> .userProfile(<span class="keyword">let</span> name):</div><div class="line">            <span class="keyword">return</span> <span class="string">"&#123;\"login\": \"<span class="subst">\(name)</span>\", \"id\": 100&#125;"</span>.data(using: <span class="type">String</span>.<span class="type">Encoding</span>.utf8)!</div><div class="line">        <span class="keyword">case</span> .userRepositories(<span class="keyword">let</span> name):</div><div class="line">            <span class="keyword">return</span> <span class="string">"[&#123;\"name\": \"<span class="subst">\(name)</span>\"&#125;]"</span>.data(using: <span class="type">String</span>.<span class="type">Encoding</span>.utf8)!</div><div class="line">        &#125;</div><div class="line">    &#125;</div><div class="line">    <span class="keyword">public</span> <span class="keyword">var</span> headers: [<span class="type">String</span>: <span class="type">String</span>]? &#123;</div><div class="line">        <span class="keyword">return</span> <span class="literal">nil</span></div><div class="line">    &#125;</div><div class="line">&#125;</div><div class="line"></div><div class="line"><span class="comment">/// 发起请求</span></div><div class="line">gitHubProvider.request(.userRepositories(username)) &#123; result <span class="keyword">in</span></div><div class="line">            <span class="keyword">do</span> &#123;</div><div class="line">                <span class="keyword">let</span> response = <span class="keyword">try</span> result.dematerialize()</div><div class="line">                <span class="keyword">let</span> value = <span class="keyword">try</span> response.mapNSArray()</div><div class="line">                <span class="keyword">self</span>.repos = value</div><div class="line">                <span class="keyword">self</span>.tableView.reloadData()</div><div class="line">            &#125; <span class="keyword">catch</span> &#123;</div><div class="line">                <span class="keyword">let</span> printableError = error <span class="keyword">as</span> <span class="type">CustomStringConvertible</span></div><div class="line">                <span class="keyword">self</span>.showAlert(<span class="string">"GitHub Fetch"</span>, message: printableError.description)</div><div class="line">            &#125;</div><div class="line">        &#125;</div></pre></td></tr></table></figure>
+<h2 id="框架组成"><a href="#框架组成" class="headerlink" title="框架组成"></a>框架组成</h2><p>Moya的项目主要由八个部分组成。</p>
+<h3 id="request"><a href="#request" class="headerlink" title="request"></a>request</h3><p>request部分主要包含请求相关的代码。定义了TargetType协议，通过targetType 来定义一个请求</p>
+<ul>
+<li>TargetType: 请求相关信息</li>
+<li>Endpoint: Moya进行请求的最终数据结构</li>
+<li>Task: 定义了请求的发起方式，请求参数设置等</li>
+<li>Cancellable: 请求取消用 </li>
+</ul>
+<h3 id="Provider"><a href="#Provider" class="headerlink" title="Provider"></a>Provider</h3><p>Provider中包含了最核心的代码，主要负责组装 TargetType 和 Endpoint，并发起请求和转换请求结果为Response</p>
+<ul>
+<li>MoyaProvider: 主要的核心代码</li>
+<li>MoyaProvider+Defaults: 提供一些内部需要的默认实现</li>
+<li>MoyaProvider+Internal: 提供了内部使用的方法</li>
+</ul>
+<h3 id="response"><a href="#response" class="headerlink" title="response"></a>response</h3><p>响应结果相关方法，以及字典，JSON等相关转换方法</p>
+<ul>
+<li>MoyaError: 封装了相关错误</li>
+<li>Response: 核心响应体类</li>
+</ul>
+<h3 id="Plugins"><a href="#Plugins" class="headerlink" title="Plugins"></a>Plugins</h3><p>插件相关。</p>
+<ul>
+<li>Plugin: 插件核心定义，用于扩展其他插件</li>
+<li>AccessTokenPlugin: 授权插件</li>
+<li>NetworkActivityPlugin: 显示网络活动插件(转圈小菊花靠这个来显示)</li>
+<li>NetworkLoggerPlugin: 像控制台输出日志的插件</li>
+<li>CredentialsPlugin: https证书交换插件</li>
+</ul>
+<h3 id="Alamofire"><a href="#Alamofire" class="headerlink" title="Alamofire"></a>Alamofire</h3><p>Alamofire 的封装层</p>
+<ul>
+<li>MultipartFormData: 表单数据的封装</li>
+<li>Moya+Alamofire: Alamofire类型桥接</li>
+</ul>
+<h3 id="utils"><a href="#utils" class="headerlink" title="utils"></a>utils</h3><p>工具类</p>
+<h3 id="Extension"><a href="#Extension" class="headerlink" title="Extension"></a>Extension</h3><p>其他框架的扩展支持，目前主要就是ReativeCocoa和RxSwift的扩展</p>
+<h3 id="test"><a href="#test" class="headerlink" title="test"></a>test</h3><p>单元测试相关</p>
+<p><img src="./moya_project.png" alt="Moya Structure"></p>
+<h2 id="TargetType"><a href="#TargetType" class="headerlink" title="TargetType"></a>TargetType</h2><figure class="highlight swift"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div></pre></td><td class="code"><pre><div class="line"><span class="comment">/// The protocol used to define the specifications necessary for a `MoyaProvider`.</span></div><div class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">protocol</span> <span class="title">TargetType</span> </span>&#123;</div><div class="line"></div><div class="line">    <span class="comment">/// The target's base `URL`.</span></div><div class="line">    <span class="keyword">var</span> baseURL: <span class="type">URL</span> &#123; <span class="keyword">get</span> &#125;</div><div class="line"></div><div class="line">    <span class="comment">/// The path to be appended to `baseURL` to form the full `URL`.</span></div><div class="line">    <span class="keyword">var</span> path: <span class="type">String</span> &#123; <span class="keyword">get</span> &#125;</div><div class="line"></div><div class="line">    <span class="comment">/// The HTTP method used in the request.</span></div><div class="line">    <span class="keyword">var</span> method: <span class="type">Moya</span>.<span class="type">Method</span> &#123; <span class="keyword">get</span> &#125;</div><div class="line"></div><div class="line">    <span class="comment">/// Provides stub data for use in testing.</span></div><div class="line">    <span class="keyword">var</span> sampleData: <span class="type">Data</span> &#123; <span class="keyword">get</span> &#125;</div><div class="line"></div><div class="line">    <span class="comment">/// The type of HTTP task to be performed.</span></div><div class="line">    <span class="keyword">var</span> task: <span class="type">Task</span> &#123; <span class="keyword">get</span> &#125;</div><div class="line"></div><div class="line">    <span class="comment">/// The type of validation to perform on the request. Default is `.none`.</span></div><div class="line">    <span class="keyword">var</span> validationType: <span class="type">ValidationType</span> &#123; <span class="keyword">get</span> &#125;</div><div class="line"></div><div class="line">    <span class="comment">/// The headers to be used in the request.</span></div><div class="line">    <span class="keyword">var</span> headers: [<span class="type">String</span>: <span class="type">String</span>]? &#123; <span class="keyword">get</span> &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>TargetType协议定义了调用方需要实现哪些属性，来提供一个请求所需要的值。</p>
+<h2 id="Provider-1"><a href="#Provider-1" class="headerlink" title="Provider"></a>Provider</h2><p>Providers是Moya中的核心，Moya中所有的API请求都是通过Provider来发起的。因此大多数时候，你的代码请求像这样：</p>
+<figure class="highlight swift"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div></pre></td><td class="code"><pre><div class="line">gitHubProvider.request(.userRepositories(username)) &#123; result <span class="keyword">in</span></div><div class="line">            <span class="keyword">do</span> &#123;</div><div class="line">                <span class="keyword">let</span> response = <span class="keyword">try</span> result.dematerialize()</div><div class="line">                <span class="keyword">let</span> value = <span class="keyword">try</span> response.mapNSArray()</div><div class="line">                <span class="keyword">self</span>.repos = value</div><div class="line">                <span class="keyword">self</span>.tableView.reloadData()</div><div class="line">            &#125; <span class="keyword">catch</span> &#123;</div><div class="line">                <span class="keyword">let</span> printableError = error <span class="keyword">as</span> <span class="type">CustomStringConvertible</span></div><div class="line">                <span class="keyword">self</span>.showAlert(<span class="string">"GitHub Fetch"</span>, message: printableError.description)</div><div class="line">            &#125;</div><div class="line">        &#125;</div></pre></td></tr></table></figure>
+<p>Provider 真正在做的事情可以用一个流来表示： Target -&gt; Endpoint -&gt; Request .这个过程中 Provider会一步步来生成一个NSURLRequest来交给Alamofire发起请求.</p>
+<p>下面我们从Provider的构造函数开始来看一看这个类的组成</p>
+<figure class="highlight swift"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">public</span> <span class="keyword">init</span>(endpointClosure: @escaping <span class="type">EndpointClosure</span> = <span class="type">MoyaProvider</span>.defaultEndpointMapping,</div><div class="line">                requestClosure: @escaping <span class="type">RequestClosure</span> = <span class="type">MoyaProvider</span>.defaultRequestMapping,</div><div class="line">                stubClosure: @escaping <span class="type">StubClosure</span> = <span class="type">MoyaProvider</span>.neverStub,</div><div class="line">                callbackQueue: <span class="type">DispatchQueue</span>? = <span class="literal">nil</span>,</div><div class="line">                manager: <span class="type">Manager</span> = <span class="type">MoyaProvider</span>&lt;<span class="type">Target</span>&gt;.defaultAlamofireManager(),</div><div class="line">                plugins: [<span class="type">PluginType</span>] = [],</div><div class="line">                trackInflights: <span class="type">Bool</span> = <span class="literal">false</span>) &#123; </div><div class="line">                </div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>首先我们可以看到三个闭包，这三个闭包我们放到最后说。</p>
+<ul>
+<li>首先一个callbackQueue，如字面意思，回调的线程。</li>
+<li>manager: manager是最终真正用来请求的类，是由Alamofire桥接过来的。Moya只对Alamofire的类型进行了简单的桥接，这样做的好处是，如果调用方不使用Alamofire的话，我们可以快速替换网络请求库，moya提供了一个默认的Manager实现</li>
+</ul>
+<figure class="highlight swift"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">public</span> <span class="keyword">final</span> <span class="class"><span class="keyword">class</span> <span class="title">func</span> <span class="title">defaultAlamofireManager</span>() -&gt; <span class="title">Manager</span> </span>&#123;</div><div class="line">       <span class="keyword">let</span> configuration = <span class="type">URLSessionConfiguration</span>.<span class="keyword">default</span></div><div class="line">       configuration.httpAdditionalHeaders = <span class="type">Manager</span>.defaultHTTPHeaders</div><div class="line"></div><div class="line">       <span class="keyword">let</span> manager = <span class="type">Manager</span>(configuration: configuration)</div><div class="line">       manager.startRequestsImmediately = <span class="literal">false</span></div><div class="line">       <span class="keyword">return</span> manager</div><div class="line">   &#125;</div></pre></td></tr></table></figure>
+<ul>
+<li>plugins: 需要使用到的插件，这是一个非常方便的功能，能保证在不修改源码的情况下，来扩展其他功能。而且能够保证Provider的职责单一，满足开闭原则。</li>
+<li>trackInFlights: 是否要追踪请求。这个默认是不追踪的。如果传入true的话，</li>
+</ul>
+<p>接下来是最核心的三个闭包</p>
+<ul>
+<li>EndpointClosure: 这个closure负责从TargetType转换成Endpoint， EndPoint 是最终发起请求的一个数据格式,保存了下面数据</li>
+</ul>
+<figure class="highlight swift"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div></pre></td><td class="code"><pre><div class="line">open <span class="class"><span class="keyword">class</span> <span class="title">Endpoint</span> </span>&#123;</div><div class="line">    <span class="keyword">public</span> <span class="keyword">typealias</span> <span class="type">SampleResponseClosure</span> = () -&gt; <span class="type">EndpointSampleResponse</span></div><div class="line"></div><div class="line">    <span class="comment">/// A string representation of the URL for the request.</span></div><div class="line">    open <span class="keyword">let</span> url: <span class="type">String</span></div><div class="line"></div><div class="line">    <span class="comment">/// A closure responsible for returning an `EndpointSampleResponse`.</span></div><div class="line">    open <span class="keyword">let</span> sampleResponseClosure: <span class="type">SampleResponseClosure</span></div><div class="line"></div><div class="line">    <span class="comment">/// The HTTP method for the request.</span></div><div class="line">    open <span class="keyword">let</span> method: <span class="type">Moya</span>.<span class="type">Method</span></div><div class="line"></div><div class="line">    <span class="comment">/// The `Task` for the request.</span></div><div class="line">    open <span class="keyword">let</span> task: <span class="type">Task</span></div><div class="line"></div><div class="line">    <span class="comment">/// The HTTP header fields for the request.</span></div><div class="line">    open <span class="keyword">let</span> httpHeaderFields: [<span class="type">String</span>: <span class="type">String</span>]?</div></pre></td></tr></table></figure>
+<p>从初始化方法中我们可以看到，Moya 对于 EndpointClosure 提供了默认实现，我们可以在<strong>MoyaProvider+Defaults.swift</strong> 中找到它</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div></pre></td><td class="code"><pre><div class="line">public final class func defaultEndpointMapping(for target: Target) -&gt; Endpoint &#123;</div><div class="line">        return Endpoint(</div><div class="line">            url: URL(target: target).absoluteString,</div><div class="line">            sampleResponseClosure: &#123; .networkResponse(200, target.sampleData) &#125;,</div><div class="line">            method: target.method,</div><div class="line">            task: target.task,</div><div class="line">            httpHeaderFields: target.headers</div><div class="line">        )</div><div class="line">    &#125;</div></pre></td></tr></table></figure>
+<p>我们可以看到这里只是一个简单的转换，在实际使用过程中，很多情况下我们需要自定义这个闭包来实现更复杂的功能</p>
+<ul>
+<li>requestClosure：负责把Endpoint 转换成 NSURLRequest，同样的我们可以在  <strong>MoyaProvider+Defaults.swift</strong> 中找到它</li>
+</ul>
+<figure class="highlight swift"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">public</span> <span class="keyword">final</span> <span class="class"><span class="keyword">class</span> <span class="title">func</span> <span class="title">defaultRequestMapping</span>(<span class="title">for</span> <span class="title">endpoint</span>: <span class="title">Endpoint</span>, <span class="title">closure</span>: <span class="title">RequestResultClosure</span>) </span>&#123;</div><div class="line">       <span class="keyword">do</span> &#123;</div><div class="line">           <span class="keyword">let</span> urlRequest = <span class="keyword">try</span> endpoint.urlRequest()</div><div class="line">           closure(.success(urlRequest))</div><div class="line">       &#125; <span class="keyword">catch</span> <span class="type">MoyaError</span>.requestMapping(<span class="keyword">let</span> url) &#123;</div><div class="line">           closure(.failure(<span class="type">MoyaError</span>.requestMapping(url)))</div><div class="line">       &#125; <span class="keyword">catch</span> <span class="type">MoyaError</span>.parameterEncoding(<span class="keyword">let</span> error) &#123;</div><div class="line">           closure(.failure(<span class="type">MoyaError</span>.parameterEncoding(error)))</div><div class="line">       &#125; <span class="keyword">catch</span> &#123;</div><div class="line">           closure(.failure(<span class="type">MoyaError</span>.underlying(error, <span class="literal">nil</span>)))</div><div class="line">       &#125;</div><div class="line">   &#125;</div></pre></td></tr></table></figure>
+<ul>
+<li>stubClosure: 这个闭包会返回一个枚举 <strong>StubBehavior</strong> , 默认会返回never，如果你需要假数据测试的话可以重写这里。 </li>
+</ul>
+<figure class="highlight swift"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">enum</span> <span class="title">StubBehavior</span> </span>&#123;</div><div class="line"></div><div class="line">    <span class="comment">/// 不进行stub</span></div><div class="line">    <span class="keyword">case</span> never</div><div class="line"></div><div class="line">    <span class="comment">/// 立即返回假数据（即TargetType中的sampleData）</span></div><div class="line">    <span class="keyword">case</span> immediate</div><div class="line"></div><div class="line">    <span class="comment">/// 延迟x秒后返回</span></div><div class="line">    <span class="keyword">case</span> delayed(seconds: <span class="type">TimeInterval</span>)</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>Moya采取了最简单粗暴的方式来返回假数据.如果是never 则进行真正的请求。否则直接进入假数据部分.</p>
+<p><strong>MoyaProvider+Internal.swift</strong></p>
+<figure class="highlight swift"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">private</span> <span class="function"><span class="keyword">func</span> <span class="title">performRequest</span><span class="params">(<span class="number">_</span> target: Target, request: URLRequest, callbackQueue: DispatchQueue?, progress: Moya.ProgressBlock?, completion: @escaping Moya.Completion, endpoint: Endpoint, stubBehavior: Moya.StubBehavior)</span></span> -&gt; <span class="type">Cancellable</span> &#123;</div><div class="line">        <span class="keyword">switch</span> stubBehavior &#123;</div><div class="line">        <span class="keyword">case</span> .never:</div><div class="line">            <span class="keyword">switch</span> endpoint.task &#123;</div><div class="line">            <span class="keyword">case</span> .requestPlain, .requestData, .requestJSONEncodable, .requestCustomJSONEncodable, .requestParameters, .requestCompositeData, .requestCompositeParameters:</div><div class="line">                <span class="keyword">return</span> <span class="keyword">self</span>.sendRequest(target, request: request, callbackQueue: callbackQueue, progress: progress, completion: completion)</div><div class="line">            <span class="keyword">case</span> .uploadFile(<span class="keyword">let</span> file):</div><div class="line">                <span class="keyword">return</span> <span class="keyword">self</span>.sendUploadFile(target, request: request, callbackQueue: callbackQueue, file: file, progress: progress, completion: completion)</div><div class="line">            <span class="keyword">case</span> .uploadMultipart(<span class="keyword">let</span> multipartBody), .uploadCompositeMultipart(<span class="keyword">let</span> multipartBody, <span class="number">_</span>):</div><div class="line">                <span class="keyword">guard</span> !multipartBody.isEmpty &amp;&amp; endpoint.method.supportsMultipart <span class="keyword">else</span> &#123;</div><div class="line">                    <span class="built_in">fatalError</span>(<span class="string">"<span class="subst">\(target)</span> is not a multipart upload target."</span>)</div><div class="line">                &#125;</div><div class="line">                <span class="keyword">return</span> <span class="keyword">self</span>.sendUploadMultipart(target, request: request, callbackQueue: callbackQueue, multipartBody: multipartBody, progress: progress, completion: completion)</div><div class="line">            <span class="keyword">case</span> .downloadDestination(<span class="keyword">let</span> destination), .downloadParameters(<span class="number">_</span>, <span class="number">_</span>, <span class="keyword">let</span> destination):</div><div class="line">                <span class="keyword">return</span> <span class="keyword">self</span>.sendDownloadRequest(target, request: request, callbackQueue: callbackQueue, destination: destination, progress: progress, completion: completion)</div><div class="line">            &#125;</div><div class="line">        <span class="keyword">default</span>:</div><div class="line">            <span class="keyword">return</span> <span class="keyword">self</span>.stubRequest(target, request: request, callbackQueue: callbackQueue, completion: completion, endpoint: endpoint, stubBehavior: stubBehavior)</div><div class="line">        &#125;</div><div class="line">    &#125;</div></pre></td></tr></table></figure>
+<h2 id="Manager和Alamofire"><a href="#Manager和Alamofire" class="headerlink" title="Manager和Alamofire"></a>Manager和Alamofire</h2><p>Moya在 <strong>Moya+Alamofire.swift</strong> 文件中对 Alamofire进行了简单的包装，这一层包装隔离了Alamofire的代码，如果需要更换请求框架的话，可以进行简单的修改来替换，而不必修改外部调用。</p>
+<p>如果你想创建自己的Manager的话，可以在Provider初始化的时候传入自己的Manager</p>
+<h2 id="Plugin"><a href="#Plugin" class="headerlink" title="Plugin"></a>Plugin</h2><p>Moya提供了非常好用的插件机制，通过插件你可以在不修改源码的基础上，充分的扩展Moya的功能。</p>
+<figure class="highlight swift"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div></pre></td><td class="code"><pre><div class="line"><span class="comment">///Plugin.swift</span></div><div class="line"></div><div class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">protocol</span> <span class="title">PluginType</span> </span>&#123;</div><div class="line">    <span class="comment">/// Called to modify a request before sending.</span></div><div class="line">    <span class="function"><span class="keyword">func</span> <span class="title">prepare</span><span class="params">(<span class="number">_</span> request: URLRequest, target: TargetType)</span></span> -&gt; <span class="type">URLRequest</span></div><div class="line"></div><div class="line">    <span class="comment">/// Called immediately before a request is sent over the network (or stubbed).</span></div><div class="line">    <span class="function"><span class="keyword">func</span> <span class="title">willSend</span><span class="params">(<span class="number">_</span> request: RequestType, target: TargetType)</span></span></div><div class="line"></div><div class="line">    <span class="comment">/// Called after a response has been received, but before the MoyaProvider has invoked its completion handler.</span></div><div class="line">    <span class="function"><span class="keyword">func</span> <span class="title">didReceive</span><span class="params">(<span class="number">_</span> result: Result&lt;Moya.Response, MoyaError&gt;, target: TargetType)</span></span></div><div class="line"></div><div class="line">    <span class="comment">/// Called to modify a result before completion.</span></div><div class="line">    <span class="function"><span class="keyword">func</span> <span class="title">process</span><span class="params">(<span class="number">_</span> result: Result&lt;Moya.Response, MoyaError&gt;, target: TargetType)</span></span> -&gt; <span class="type">Result</span>&lt;<span class="type">Moya</span>.<span class="type">Response</span>, <span class="type">MoyaError</span>&gt;</div><div class="line">&#125;</div><div class="line"></div><div class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">extension</span> <span class="title">PluginType</span> </span>&#123;</div><div class="line">    <span class="function"><span class="keyword">func</span> <span class="title">prepare</span><span class="params">(<span class="number">_</span> request: URLRequest, target: TargetType)</span></span> -&gt; <span class="type">URLRequest</span> &#123; <span class="keyword">return</span> request &#125;</div><div class="line">    <span class="function"><span class="keyword">func</span> <span class="title">willSend</span><span class="params">(<span class="number">_</span> request: RequestType, target: TargetType)</span></span> &#123; &#125;</div><div class="line">    <span class="function"><span class="keyword">func</span> <span class="title">didReceive</span><span class="params">(<span class="number">_</span> result: Result&lt;Moya.Response, MoyaError&gt;, target: TargetType)</span></span> &#123; &#125;</div><div class="line">    <span class="function"><span class="keyword">func</span> <span class="title">process</span><span class="params">(<span class="number">_</span> result: Result&lt;Moya.Response, MoyaError&gt;, target: TargetType)</span></span> -&gt; <span class="type">Result</span>&lt;<span class="type">Moya</span>.<span class="type">Response</span>, <span class="type">MoyaError</span>&gt; &#123; <span class="keyword">return</span> result &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>调用方可以通过实现上面协议，来创建各种插件处理不同事情，从而保证Provider的单一职责。</p>
+<ul>
+<li><strong>func prepare(_ request: URLRequest, target: TargetType) -&gt; URLRequest</strong> 方法会在Endpoint生成Request之前调用。 </li>
+</ul>
+<figure class="highlight swift"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div></pre></td><td class="code"><pre><div class="line"><span class="comment">////MoyaProvider+Internal.swift</span></div><div class="line"></div><div class="line"><span class="function"><span class="keyword">func</span> <span class="title">requestNormal</span><span class="params">(<span class="number">_</span> target: Target, callbackQueue: DispatchQueue?, progress: Moya.ProgressBlock?, completion: @escaping Moya.Completion)</span></span> -&gt; <span class="type">Cancellable</span> &#123;</div><div class="line"> 			</div><div class="line"> 			.......</div><div class="line"> 			</div><div class="line"> 			</div><div class="line">            <span class="comment">// Allow plugins to modify request</span></div><div class="line">            <span class="keyword">let</span> preparedRequest = <span class="keyword">self</span>.plugins.<span class="built_in">reduce</span>(request) &#123; $<span class="number">1</span>.prepare($<span class="number">0</span>, target: target) &#125;</div><div class="line"></div><div class="line">	      	.......</div><div class="line">	      	</div><div class="line">        <span class="keyword">return</span> cancellableToken</div><div class="line">    &#125;</div></pre></td></tr></table></figure>
+<ul>
+<li><strong>func willSend(_ request: RequestType, target: TargetType)</strong> 方法会在发送Alamofire请求之前调用</li>
+</ul>
+<figure class="highlight swift"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line"><span class="function"><span class="keyword">func</span> <span class="title">sendAlamofireRequest</span>&lt;T&gt;<span class="params">(<span class="number">_</span> alamoRequest: T, target: Target, callbackQueue: DispatchQueue?, progress progressCompletion: Moya.ProgressBlock?, completion: @escaping Moya.Completion)</span></span> -&gt; <span class="type">CancellableToken</span> <span class="keyword">where</span> <span class="type">T</span>: <span class="type">Requestable</span>, <span class="type">T</span>: <span class="type">Request</span> &#123;</div><div class="line">        <span class="comment">// Give plugins the chance to alter the outgoing request</span></div><div class="line">        <span class="keyword">let</span> plugins = <span class="keyword">self</span>.plugins</div><div class="line">        plugins.forEach &#123; $<span class="number">0</span>.willSend(alamoRequest, target: target) &#125;</div></pre></td></tr></table></figure>
+<ul>
+<li><p><strong>func didReceive(_ result: Result<moya.response, moyaerror="">, target: TargetType)</moya.response,></strong> 收到Response的时候调用</p>
+</li>
+<li><p><strong>func process(_ result: Result<moya.response, moyaerror="">, target: TargetType) -&gt; Result<moya.response, moyaerror=""></moya.response,></moya.response,></strong>  请求完成后调用。</p>
+</li>
+</ul>
+<h2 id="Extension-1"><a href="#Extension-1" class="headerlink" title="Extension"></a>Extension</h2><p>Moya 默认提供了 ReactiveCocoa的扩展ReactiveMoya 和 RxSwift扩展RxMoya。 这里简单看一下RxMoya的实现。</p>
+<p>首先我们可以看到三个关于RxMoya的文件</p>
+<ul>
+<li>MoyaProvider+Rx.swift 主要的扩展文件</li>
+<li>Observable+Response.swift Response部分的扩展</li>
+<li>Single+Response.swift Single Response部分的扩展</li>
+</ul>
+<figure class="highlight swift"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div><div class="line">44</div><div class="line">45</div><div class="line">46</div><div class="line">47</div><div class="line">48</div><div class="line">49</div><div class="line">50</div><div class="line">51</div><div class="line">52</div><div class="line">53</div><div class="line">54</div><div class="line">55</div><div class="line">56</div><div class="line">57</div><div class="line">58</div><div class="line">59</div><div class="line">60</div><div class="line">61</div><div class="line">62</div></pre></td><td class="code"><pre><div class="line"><span class="class"><span class="keyword">extension</span> <span class="title">MoyaProvider</span>: <span class="title">ReactiveCompatible</span> </span>&#123;&#125;</div><div class="line"></div><div class="line"><span class="comment">// 对Rx中 Base 为 MoyaProviderType 进行扩展</span></div><div class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">extension</span> <span class="title">Reactive</span> <span class="title">where</span> <span class="title">Base</span>: <span class="title">MoyaProviderType</span> </span>&#123;</div><div class="line"></div><div class="line">    <span class="comment">/// Designated request-making method.</span></div><div class="line">    <span class="comment">///</span></div><div class="line">    <span class="comment">/// - Parameters:</span></div><div class="line">    <span class="comment">///   - token: Entity, which provides specifications necessary for a `MoyaProvider`.</span></div><div class="line">    <span class="comment">///   - callbackQueue: Callback queue. If nil - queue from provider initializer will be used.</span></div><div class="line">    <span class="comment">/// - Returns: Single response object.</span></div><div class="line">    </div><div class="line">    <span class="comment">///Single: 只会发送一个值，或者发送一次error</span></div><div class="line">    </div><div class="line">    <span class="keyword">public</span> <span class="function"><span class="keyword">func</span> <span class="title">request</span><span class="params">(<span class="number">_</span> token: Base.Target, callbackQueue: DispatchQueue? = <span class="literal">nil</span>)</span></span> -&gt; <span class="type">Single</span>&lt;<span class="type">Response</span>&gt; &#123;</div><div class="line">        <span class="keyword">return</span> <span class="type">Single</span>.create &#123; [<span class="keyword">weak</span> base] single <span class="keyword">in</span></div><div class="line">            <span class="keyword">let</span> cancellableToken = base?.request(token, callbackQueue: callbackQueue, progress: <span class="literal">nil</span>) &#123; result <span class="keyword">in</span></div><div class="line">                <span class="keyword">switch</span> result &#123;</div><div class="line">                <span class="keyword">case</span> <span class="keyword">let</span> .success(response):</div><div class="line">                    single(.success(response))</div><div class="line">                <span class="keyword">case</span> <span class="keyword">let</span> .failure(error):</div><div class="line">                    single(.error(error))</div><div class="line">                &#125;</div><div class="line">            &#125;</div><div class="line"></div><div class="line">            <span class="keyword">return</span> <span class="type">Disposables</span>.create &#123;</div><div class="line">                cancellableToken?.cancel()</div><div class="line">            &#125;</div><div class="line">        &#125;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    <span class="comment">/// Designated request-making method with progress.</span></div><div class="line">    <span class="keyword">public</span> <span class="function"><span class="keyword">func</span> <span class="title">requestWithProgress</span><span class="params">(<span class="number">_</span> token: Base.Target, callbackQueue: DispatchQueue? = <span class="literal">nil</span>)</span></span> -&gt; <span class="type">Observable</span>&lt;<span class="type">ProgressResponse</span>&gt; &#123;</div><div class="line">        <span class="keyword">let</span> progressBlock: (<span class="type">AnyObserver</span>) -&gt; (<span class="type">ProgressResponse</span>) -&gt; <span class="type">Void</span> = &#123; observer <span class="keyword">in</span></div><div class="line">            <span class="keyword">return</span> &#123; progress <span class="keyword">in</span></div><div class="line">                observer.onNext(progress)</div><div class="line">            &#125;</div><div class="line">        &#125;</div><div class="line"></div><div class="line">        <span class="keyword">let</span> response: <span class="type">Observable</span>&lt;<span class="type">ProgressResponse</span>&gt; = <span class="type">Observable</span>.create &#123; [<span class="keyword">weak</span> base] observer <span class="keyword">in</span></div><div class="line">            <span class="keyword">let</span> cancellableToken = base?.request(token, callbackQueue: callbackQueue, progress: progressBlock(observer)) &#123; result <span class="keyword">in</span></div><div class="line">                <span class="keyword">switch</span> result &#123;</div><div class="line">                <span class="keyword">case</span> .success:</div><div class="line">                    observer.onCompleted()</div><div class="line">                <span class="keyword">case</span> <span class="keyword">let</span> .failure(error):</div><div class="line">                    observer.onError(error)</div><div class="line">                &#125;</div><div class="line">            &#125;</div><div class="line"></div><div class="line">            <span class="keyword">return</span> <span class="type">Disposables</span>.create &#123;</div><div class="line">                cancellableToken?.cancel()</div><div class="line">            &#125;</div><div class="line">        &#125;</div><div class="line"></div><div class="line">        <span class="comment">// Accumulate all progress and combine them when the result comes</span></div><div class="line">        <span class="keyword">return</span> response.scan(<span class="type">ProgressResponse</span>()) &#123; last, progress <span class="keyword">in</span></div><div class="line">            <span class="keyword">let</span> progressObject = progress.progressObject ?? last.progressObject</div><div class="line">            <span class="keyword">let</span> response = progress.response ?? last.response</div><div class="line">            <span class="keyword">return</span> <span class="type">ProgressResponse</span>(progress: progressObject, response: response)</div><div class="line">        &#125;</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/Swift/" rel="tag"># Swift</a>
+          
+            <a href="/tags/Moya/" rel="tag"># Moya</a>
+          
+        </div>
+      
+
+      
+        
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2018/04/11/UI设计基础知识/" rel="next" title="UI设计基础知识">
+                <i class="fa fa-chevron-left"></i> UI设计基础知识
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+  <div class="comments" id="comments">
+    
+      <div id="disqus_thread">
+        <noscript>
+          Please enable JavaScript to view the
+          <a href="//disqus.com/?ref_noscript">comments powered by Disqus.</a>
+        </noscript>
+      </div>
+    
+  </div>
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap" >
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+          <img class="site-author-image" itemprop="image"
+               src="/uploads/avatar.jpg"
+               alt="敖老黑" />
+          <p class="site-author-name" itemprop="name">敖老黑</p>
+           
+              <p class="site-description motion-element" itemprop="description">技术分享</p>
+          
+        </div>
+        <nav class="site-state motion-element">
+
+          
+            <div class="site-state-item site-state-posts">
+              <a href="/archives">
+                <span class="site-state-item-count">19</span>
+                <span class="site-state-item-name">日志</span>
+              </a>
+            </div>
+          
+
+          
+            
+            
+            <div class="site-state-item site-state-categories">
+              <a href="/categories/index.html">
+                <span class="site-state-item-count">4</span>
+                <span class="site-state-item-name">分类</span>
+              </a>
+            </div>
+          
+
+          
+            
+            
+            <div class="site-state-item site-state-tags">
+              <a href="/tags/index.html">
+                <span class="site-state-item-count">15</span>
+                <span class="site-state-item-name">标签</span>
+              </a>
+            </div>
+          
+
+        </nav>
+
+        
+
+        <div class="links-of-author motion-element">
+          
+            
+              <span class="links-of-author-item">
+                <a href="https://github.com/RockyAo" target="_blank" title="GitHub">
+                  
+                    <i class="fa fa-fw fa-github"></i>
+                  
+                  GitHub
+                </a>
+              </span>
+            
+              <span class="links-of-author-item">
+                <a href="https://twitter.com/CGSizeMake" target="_blank" title="Twitter">
+                  
+                    <i class="fa fa-fw fa-twitter"></i>
+                  
+                  Twitter
+                </a>
+              </span>
+            
+              <span class="links-of-author-item">
+                <a href="http://weibo.com/5357889389/profile?rightmod=1&wvr=6&mod=personinfo" target="_blank" title="Weibo">
+                  
+                    <i class="fa fa-fw fa-weibo"></i>
+                  
+                  Weibo
+                </a>
+              </span>
+            
+          
+        </div>
+
+        
+        
+
+        
+        
+
+        
+
+
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#Moya-源码分析"><span class="nav-number">1.</span> <span class="nav-text">Moya 源码分析</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#面向协议编程"><span class="nav-number">1.1.</span> <span class="nav-text">面向协议编程</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#OOP-带来的三个问题"><span class="nav-number">1.1.0.1.</span> <span class="nav-text">OOP 带来的三个问题</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#面向协议参考文章"><span class="nav-number">1.1.0.2.</span> <span class="nav-text">面向协议参考文章</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Moya简单介绍和使用"><span class="nav-number">1.2.</span> <span class="nav-text">Moya简单介绍和使用</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#简单使用"><span class="nav-number">1.2.1.</span> <span class="nav-text">简单使用</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#框架组成"><span class="nav-number">1.3.</span> <span class="nav-text">框架组成</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#request"><span class="nav-number">1.3.1.</span> <span class="nav-text">request</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Provider"><span class="nav-number">1.3.2.</span> <span class="nav-text">Provider</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#response"><span class="nav-number">1.3.3.</span> <span class="nav-text">response</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Plugins"><span class="nav-number">1.3.4.</span> <span class="nav-text">Plugins</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Alamofire"><span class="nav-number">1.3.5.</span> <span class="nav-text">Alamofire</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#utils"><span class="nav-number">1.3.6.</span> <span class="nav-text">utils</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Extension"><span class="nav-number">1.3.7.</span> <span class="nav-text">Extension</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#test"><span class="nav-number">1.3.8.</span> <span class="nav-text">test</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#TargetType"><span class="nav-number">1.4.</span> <span class="nav-text">TargetType</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Provider-1"><span class="nav-number">1.5.</span> <span class="nav-text">Provider</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Manager和Alamofire"><span class="nav-number">1.6.</span> <span class="nav-text">Manager和Alamofire</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Plugin"><span class="nav-number">1.7.</span> <span class="nav-text">Plugin</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Extension-1"><span class="nav-number">1.8.</span> <span class="nav-text">Extension</span></a></li></ol></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright" >
+  
+  &copy; 
+  <span itemprop="copyrightYear">2018</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">敖老黑</span>
+</div>
+
+
+<div class="powered-by">
+  由 <a class="theme-link" href="https://hexo.io">Hexo</a> 强力驱动
+</div>
+
+<div class="theme-info">
+  主题 -
+  <a class="theme-link" href="https://github.com/iissnan/hexo-theme-next">
+    NexT.Mist
+  </a>
+</div>
+
+
+        
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+  
+  <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+
+  
+  <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+
+  
+  <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.0"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.0"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.0"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.0"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.0"></script>
+
+
+
+  
+
+
+
+  
+
+    <script type="text/javascript">
+      var disqus_shortname = 'helloc';
+      var disqus_identifier = '2018/08/27/Moya源码分析/';
+
+      var disqus_title = "Moya 源码分析";
+
+
+      function run_disqus_script(disqus_script) {
+        var dsq = document.createElement('script');
+        dsq.type = 'text/javascript';
+        dsq.async = true;
+        dsq.src = '//' + disqus_shortname + '.disqus.com/' + disqus_script;
+        (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+      }
+
+      run_disqus_script('count.js');
+
+      
+        var disqus_config = function () {
+            this.page.url = disqus_url;
+            this.page.identifier = disqus_identifier;
+            this.page.title = disqus_title;
+        };
+        run_disqus_script('embed.js');
+      
+
+    </script>
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+  <script src="https://cdn1.lncld.net/static/js/av-core-mini-0.6.1.js"></script>
+  <script>AV.initialize("iotCMn6bsX6mradrIyTWMyXI-gzGzoHsz", "f5bwNMQ04gmiEsX1uVPGkoGf");</script>
+  <script>
+    function showTime(Counter) {
+      var query = new AV.Query(Counter);
+      var entries = [];
+      var $visitors = $(".leancloud_visitors");
+
+      $visitors.each(function () {
+        entries.push( $(this).attr("id").trim() );
+      });
+
+      query.containedIn('url', entries);
+      query.find()
+        .done(function (results) {
+          var COUNT_CONTAINER_REF = '.leancloud-visitors-count';
+
+          if (results.length === 0) {
+            $visitors.find(COUNT_CONTAINER_REF).text(0);
+            return;
+          }
+
+          for (var i = 0; i < results.length; i++) {
+            var item = results[i];
+            var url = item.get('url');
+            var time = item.get('time');
+            var element = document.getElementById(url);
+
+            $(element).find(COUNT_CONTAINER_REF).text(time);
+          }
+          for(var i = 0; i < entries.length; i++) {
+            var url = entries[i];
+            var element = document.getElementById(url);
+            var countSpan = $(element).find(COUNT_CONTAINER_REF);
+            if( countSpan.text() == '') {
+              countSpan.text(0);
+            }
+          }
+        })
+        .fail(function (object, error) {
+          console.log("Error: " + error.code + " " + error.message);
+        });
+    }
+
+    function addCount(Counter) {
+      var $visitors = $(".leancloud_visitors");
+      var url = $visitors.attr('id').trim();
+      var title = $visitors.attr('data-flag-title').trim();
+      var query = new AV.Query(Counter);
+
+      query.equalTo("url", url);
+      query.find({
+        success: function(results) {
+          if (results.length > 0) {
+            var counter = results[0];
+            counter.fetchWhenSave(true);
+            counter.increment("time");
+            counter.save(null, {
+              success: function(counter) {
+                var $element = $(document.getElementById(url));
+                $element.find('.leancloud-visitors-count').text(counter.get('time'));
+              },
+              error: function(counter, error) {
+                console.log('Failed to save Visitor num, with error message: ' + error.message);
+              }
+            });
+          } else {
+            var newcounter = new Counter();
+            /* Set ACL */
+            var acl = new AV.ACL();
+            acl.setPublicReadAccess(true);
+            acl.setPublicWriteAccess(true);
+            newcounter.setACL(acl);
+            /* End Set ACL */
+            newcounter.set("title", title);
+            newcounter.set("url", url);
+            newcounter.set("time", 1);
+            newcounter.save(null, {
+              success: function(newcounter) {
+                var $element = $(document.getElementById(url));
+                $element.find('.leancloud-visitors-count').text(newcounter.get('time'));
+              },
+              error: function(newcounter, error) {
+                console.log('Failed to create');
+              }
+            });
+          }
+        },
+        error: function(error) {
+          console.log('Error:' + error.code + " " + error.message);
+        }
+      });
+    }
+
+    $(function() {
+      var Counter = AV.Object.extend("Counter");
+      if ($('.leancloud_visitors').length == 1) {
+        addCount(Counter);
+      } else if ($('.post-title-link').length > 1) {
+        showTime(Counter);
+      }
+    });
+  </script>
+
+
+
+  
+
+  
+
+  
+
+</body>
+</html>
