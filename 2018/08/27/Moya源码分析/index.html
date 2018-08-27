@@ -113,8 +113,8 @@ Moya简单介绍和使用Moya是一个基于Alamofire开发的，轻量级的Swi
 
 Moya简单介绍和使用Moya是一个基于Alamofire开发的，轻量级的Swift网络层。Moya的可扩展性非常强，可以方便的RXSwift等函数式框架结合。
 简单使用12345678910111213141516171819202122232425">
-<meta property="og:image" content="http://share.ra.com/./moya_project.png">
-<meta property="og:updated_time" content="2018-08-27T08:48:31.000Z">
+<meta property="og:image" content="http://share.ra.com/img/moya_project.png">
+<meta property="og:updated_time" content="2018-08-27T12:59:47.170Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="Moya 源码分析">
 <meta name="twitter:description" content="Moya 源码分析面向协议编程OOP 带来的三个问题
@@ -128,7 +128,7 @@ Moya简单介绍和使用Moya是一个基于Alamofire开发的，轻量级的Swi
 
 Moya简单介绍和使用Moya是一个基于Alamofire开发的，轻量级的Swift网络层。Moya的可扩展性非常强，可以方便的RXSwift等函数式框架结合。
 简单使用12345678910111213141516171819202122232425">
-<meta name="twitter:image" content="http://share.ra.com/./moya_project.png">
+<meta name="twitter:image" content="http://share.ra.com/img/moya_project.png">
 
 
 
@@ -462,7 +462,7 @@ Moya简单介绍和使用Moya是一个基于Alamofire开发的，轻量级的Swi
 <h3 id="utils"><a href="#utils" class="headerlink" title="utils"></a>utils</h3><p>工具类</p>
 <h3 id="Extension"><a href="#Extension" class="headerlink" title="Extension"></a>Extension</h3><p>其他框架的扩展支持，目前主要就是ReativeCocoa和RxSwift的扩展</p>
 <h3 id="test"><a href="#test" class="headerlink" title="test"></a>test</h3><p>单元测试相关</p>
-<p><img src="./moya_project.png" alt="Moya Structure"></p>
+<p><img src="/img/moya_project.png" alt="Moya Structure"></p>
 <h2 id="TargetType"><a href="#TargetType" class="headerlink" title="TargetType"></a>TargetType</h2><figure class="highlight swift"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div></pre></td><td class="code"><pre><div class="line"><span class="comment">/// The protocol used to define the specifications necessary for a `MoyaProvider`.</span></div><div class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">protocol</span> <span class="title">TargetType</span> </span>&#123;</div><div class="line"></div><div class="line">    <span class="comment">/// The target's base `URL`.</span></div><div class="line">    <span class="keyword">var</span> baseURL: <span class="type">URL</span> &#123; <span class="keyword">get</span> &#125;</div><div class="line"></div><div class="line">    <span class="comment">/// The path to be appended to `baseURL` to form the full `URL`.</span></div><div class="line">    <span class="keyword">var</span> path: <span class="type">String</span> &#123; <span class="keyword">get</span> &#125;</div><div class="line"></div><div class="line">    <span class="comment">/// The HTTP method used in the request.</span></div><div class="line">    <span class="keyword">var</span> method: <span class="type">Moya</span>.<span class="type">Method</span> &#123; <span class="keyword">get</span> &#125;</div><div class="line"></div><div class="line">    <span class="comment">/// Provides stub data for use in testing.</span></div><div class="line">    <span class="keyword">var</span> sampleData: <span class="type">Data</span> &#123; <span class="keyword">get</span> &#125;</div><div class="line"></div><div class="line">    <span class="comment">/// The type of HTTP task to be performed.</span></div><div class="line">    <span class="keyword">var</span> task: <span class="type">Task</span> &#123; <span class="keyword">get</span> &#125;</div><div class="line"></div><div class="line">    <span class="comment">/// The type of validation to perform on the request. Default is `.none`.</span></div><div class="line">    <span class="keyword">var</span> validationType: <span class="type">ValidationType</span> &#123; <span class="keyword">get</span> &#125;</div><div class="line"></div><div class="line">    <span class="comment">/// The headers to be used in the request.</span></div><div class="line">    <span class="keyword">var</span> headers: [<span class="type">String</span>: <span class="type">String</span>]? &#123; <span class="keyword">get</span> &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
 <p>TargetType协议定义了调用方需要实现哪些属性，来提供一个请求所需要的值。</p>
 <h2 id="Provider-1"><a href="#Provider-1" class="headerlink" title="Provider"></a>Provider</h2><p>Providers是Moya中的核心，Moya中所有的API请求都是通过Provider来发起的。因此大多数时候，你的代码请求像这样：</p>
